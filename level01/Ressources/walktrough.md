@@ -69,7 +69,7 @@ apt install -y john
 ```
 In another terminal, copy file to container
 ```
-docker cp /path/to/passwd john-container:~
+docker cp /path/to/passwd jtr:~
 ```
 
 Go the where the file is copied

@@ -1,6 +1,6 @@
-Install ubuntu docker named john-container and run it interactively
+Install ubuntu docker named jtr and run it interactively
 ```
-docker run -it --name john-container ubuntu:latest bash
+docker run -it --name jtr ubuntu:latest bash
 ```
 
 Install John the Ripper in the container
@@ -12,7 +12,7 @@ apt install -y john
 In another terminal, copy file to container (it's copied to root cause that's
 where the result will be)
 ```
-docker cp /path/to/passwd john-container:/root/passwd
+docker cp /path/to/passwd jtr:/root/passwd
 ```
 
 Go the where the file is copied
@@ -36,7 +36,7 @@ flag01:abcdefg:3001:3001::/home/flag/flag01:/bin/bash
 
 Delete all traces of docker container
 ```
-docker stop john-container
-docker rm john-container
+docker stop jtr
+docker rm jtr
 docker rmi ubuntu:latest
 ```
