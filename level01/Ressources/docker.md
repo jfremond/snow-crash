@@ -27,11 +27,11 @@ john passwd
 
 See the cracked password
 ```
-cat /root/.john/john.pot
+john --show passwd
 ```
 Results are
 ```
-42hDRfypTqqnw:abcdefg
+flag01:abcdefg:3001:3001::/home/flag/flag01:/bin/bash
 ```
 
 Delete all traces of docker container
