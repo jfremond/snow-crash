@@ -15,7 +15,7 @@ USER_OWNS_FILE="-user $USER"
 USER_SHARES_A_GROUP_WITH_FILE=$(
 	for gid in $(id -G); do
 		echo -n " -or -group $gid"
-	done | sed "s/^ -or //g"
+	done | sed "s/^ -or //"
 )
 
 # Finds every file that satisfies at least one of the following conditions:
