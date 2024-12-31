@@ -11,7 +11,6 @@ if [ $# -ne 1 ]; then
 	exit 1
 fi
 
-USER_OWNS_FILE="-user $USER"
 USER_SHARES_A_GROUP_WITH_FILE=$(
 	for gid in $(id -G); do
 		echo -n " -or -group $gid"
@@ -25,6 +24,6 @@ USER_SHARES_A_GROUP_WITH_FILE=$(
 #   - the file is group-executable
 # - the file is other-readable
 # - the file is other-executable
-find $1 -type f \( $USER_OWNS_FILE -or \( \( $USER_SHARES_A_GROUP_WITH_FILE \) -perm /g+rx \) -or -perm /o+rx \) 2>/dev/null
+find $1 -type f \( -user $USER -or \( \( $USER_SHARES_A_GROUP_WITH_FILE \) -perm /g+rx \) -or -perm /o+rx \) 2>/dev/null
 
 exit 0
