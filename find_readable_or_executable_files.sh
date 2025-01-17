@@ -1,18 +1,24 @@
 #!/bin/sh
 
-BOLD='\e[1m'
-RED='\e[31m'
-RESET='\e[0m'
-ERROR=$BOLD$RED'error'$RESET
+# BOLD='\e[1m'
+# RED='\e[31m'
+# RESET='\e[0m'
+# ERROR=$BOLD$RED'error'$RESET
 
-if [ $# -ne 1 ]; then
-	echo "$ERROR: wrong number of arguments"
-	echo 'usage: find_every_file_that_can_be_run_or_read.sh DIRECTORY'
-	exit 1
-fi
+# if [ $# -ne 1 ]; then
+# 	echo "$ERROR: wrong number of arguments"
+# 	echo 'usage: find_every_file_that_can_be_run_or_read.sh DIRECTORY'
+# 	exit 1
+# fi
+
+# DIRECTORY=$1
+TARGET=$USER
+
+DIRECTORY='/'
+TARGET=flag00
 
 USER_SHARES_A_GROUP_WITH_FILE=$(
-	for gid in $(id -G); do
+	for gid in $(id -G $TARGET); do
 		echo -n " -or -group $gid"
 	done | sed "s/^ -or //"
 )
@@ -24,6 +30,6 @@ USER_SHARES_A_GROUP_WITH_FILE=$(
 #   - the file is group-executable
 # - the file is other-readable
 # - the file is other-executable
-find $1 -type f \( -user $USER -or \( \( $USER_SHARES_A_GROUP_WITH_FILE \) -perm /g+rx \) -or -perm /o+rx \) 2>/dev/null
+find $DIRECTORY -type f \( -user $TARGET -or \( \( $USER_SHARES_A_GROUP_WITH_FILE \) -perm /g+rx \) -or -perm /o+rx \) 2>/dev/null
 
 exit 0

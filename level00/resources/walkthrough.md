@@ -2,13 +2,13 @@
 
 We need to find the files owned by user flag00.
 
-We start with the following command :
+We start with the following command:
 
 `find / -user flag00`
 
 This means we want to find from the root all files belonging to user `flag00`.
 
-We get a lot of permission errors like this :
+We get a lot of permission errors like this:
 
 `find: '/path/to/file': Permission denied`
 
@@ -16,7 +16,7 @@ We redirect all our errors to `/dev/null` for clarity, We now have the following
 
 `find / -user flag00 2>/dev/null`
 
-We now have this :
+We now have this:
 
 ```
 /usr/sbin/john
@@ -39,7 +39,7 @@ We try to decipher the message and once we do, we get
 
 `nottoohardhere`
 
-We then log as `flag00` with `nottoohardhere` as a password. It works ! We get the following message :
+We then log as `flag00` with `nottoohardhere` as a password. It works! We get the following message:
 > Don't forget to launch getflag !
 
 Once we get the token `x24ti5gi3x0ol2eh4esiuxias
