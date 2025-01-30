@@ -62,7 +62,7 @@ this command.
 docker run -it --name jtr ubuntu bash
 ```
 
-We're not root in our container, this is how we install John the Ripper.
+We're now root in our container, this is how we install John the Ripper.
 ```
 apt update
 apt install -y john
