@@ -18,12 +18,9 @@ READABLE_FILES_OWNED_BY_FLAG00=$(
 
 mkdir ${TMP}
 for READABLE_FILE_OWNED_BY_FLAG00 in ${READABLE_FILES_OWNED_BY_FLAG00}; do
-	LOCAL_FILE="${TMP}/$(
-		echo "${READABLE_FILE_OWNED_BY_FLAG00}" \
-		| sed 's/\./_/g' \
-		| sed 's/\//./g' \
-		| sed 's/^\.//g'
-	)"
+	LOCAL_FILE=${TMP}/$(
+		echo ${READABLE_FILE_OWNED_BY_FLAG00} | sed 's/\./_/g' | sed 's/\//./g' | sed 's/^\.//g'
+	)
 
 	# Copy the file from the virtual machine to the host + set its permissions
 	sshpass -p ${LEVEL00_PASSWORD} \
@@ -31,7 +28,7 @@ for READABLE_FILE_OWNED_BY_FLAG00 in ${READABLE_FILES_OWNED_BY_FLAG00}; do
 	chmod 600 ${LOCAL_FILE}
 
 	# Decipher the content of the file using a simple Cesar shift of 11
-	POTENTIAL_PASSWORD=$(tr A-Za-z L-ZA-Kl-za-k <${LOCAL_FILE})
+	POTENTIAL_PASSWORD=$( tr A-Za-z L-ZA-Kl-za-k <${LOCAL_FILE} )
 
 	# Try to connect to the `flag00` account
 	if
