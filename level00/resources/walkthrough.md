@@ -35,7 +35,7 @@ cdiiddwpgswtgt
 cdiiddwpgswtgt
 ```
 
-We try to decipher the message and once we do, we get
+We try to decipher the message using a Cesar shift of 11, and once we do, we get
 
 `nottoohardhere`
 
