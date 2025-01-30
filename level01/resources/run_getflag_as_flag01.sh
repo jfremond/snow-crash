@@ -1,4 +1,4 @@
-#!/bin/sh -u
+#!/bin/sh -eu
 
 PREVIOUS_FLAG=../../level00/flag
 ADDRESS=192.168.122.214

@@ -1,4 +1,4 @@
-#!/bin/sh -u
+#!/bin/sh -eu
 
 LEVEL00_PASSWORD=level00
 ADDRESS=192.168.122.214

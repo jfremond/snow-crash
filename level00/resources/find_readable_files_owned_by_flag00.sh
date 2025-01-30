@@ -1,4 +1,4 @@
-#!/bin/sh -u
+#!/bin/sh -eu
 
 USER_SHARES_A_GROUP_WITH_FILE=$(
 	for GID in $( id -G ) ; do
