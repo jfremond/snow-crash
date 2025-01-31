@@ -48,7 +48,6 @@ for POTENTIAL_PASSWORD in ${POTENTIAL_PASSWORDS}; do
 done
 
 # Did not find the correct password, and thus could not get the flag
-rm ${FLAG}
-rm ${PCAP}
+rm ${FLAG} ${PCAP}
 echo >&2 'error: none of the potential passwords is the correct one'
 exit 1
