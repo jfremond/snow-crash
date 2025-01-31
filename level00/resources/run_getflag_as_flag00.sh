@@ -10,10 +10,8 @@ FLAG=../flag
 # to find every file that is owned by the user `flag00`
 # and can be read by the user `level00`
 READABLE_FILES_OWNED_BY_FLAG00=$(
-	sshpass -p ${LEVEL00_PASSWORD} \
-		ssh -p ${PORT} level00@${ADDRESS} 'sh -s' \
-			<find_readable_files_owned_by_flag00.sh \
-			2>/dev/null
+	sshpass -p ${LEVEL00_PASSWORD} <find_readable_files_owned_by_flag00.sh 2>/dev/null \
+		ssh -p ${PORT} level00@${ADDRESS} 'sh -s'
 )
 
 mkdir ${TMP}
@@ -23,8 +21,8 @@ for READABLE_FILE_OWNED_BY_FLAG00 in ${READABLE_FILES_OWNED_BY_FLAG00}; do
 	)
 
 	# Copy the file from the virtual machine to the host + set its permissions
-	sshpass -p ${LEVEL00_PASSWORD} \
-		scp -P ${PORT} level00@${ADDRESS}:${READABLE_FILE_OWNED_BY_FLAG00} ${LOCAL_FILE} 2>/dev/null
+	sshpass -p ${LEVEL00_PASSWORD} 2>/dev/null \
+		scp -P ${PORT} level00@${ADDRESS}:${READABLE_FILE_OWNED_BY_FLAG00} ${LOCAL_FILE}
 	chmod 600 ${LOCAL_FILE}
 
 	# Decipher the content of the file using a simple Cesar shift of 11
@@ -32,8 +30,8 @@ for READABLE_FILE_OWNED_BY_FLAG00 in ${READABLE_FILES_OWNED_BY_FLAG00}; do
 
 	# Try to connect to the `flag00` account
 	if
-		sshpass -p ${POTENTIAL_PASSWORD} \
-			ssh -p ${PORT} flag00@${ADDRESS} "getflag | grep -oE '[^ ]+$'" >${FLAG} 2>/dev/null
+		sshpass -p ${POTENTIAL_PASSWORD} >${FLAG} 2>/dev/null \
+			ssh -p ${PORT} flag00@${ADDRESS} "getflag | grep -oE '[^ ]+$'"
 	then
 		# Found the correct password and saved the flag
 		rm -rf ${TMP}

