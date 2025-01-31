@@ -46,11 +46,12 @@ A few things are happening in the main :
 
 Read more about ID [here](https://medium.com/@emanuele.santini.88/a-deep-introduction-to-root-access-on-linux-part-1-the-suid-and-sgid-permissions-0f1203dd126c) and [there](https://medium.com/@emanuele.santini.88/a-deep-introduction-to-root-access-on-linux-part-2-the-saved-user-and-group-id-49d1858e7bba).
 
-From this we understand that we need to run the command getflag when running the executable, as we'll have the same ID as `flag03` when we'll do it.
+From this we understand that we need to run the command getflag when running the executable,
+as we'll have the same ID as `flag03` when we'll do it.
 
-We first find the path to the `getflag` command :
+We first find the path to the `getflag` command:
 ```
-whereis getflag
+which getflag
 getflag: /bin/getflag
 ```
 We then find a way to create a symbolic link between `getflag` and `echo`. We'll use the `PATH` to do so.
@@ -59,7 +60,8 @@ echo $PATH
 /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
 ```
 
-Attempting to create a symbolic link between `getflag` and `echo` using the directories in `PATH` fails, we need a new directory to add in `PATH`.
+Attempting to create a symbolic link between `getflag` and `echo`
+using the directories in `PATH` fails, we need a new directory to add in `PATH`. 
 We're going to use `tmp`. 
 
 We need to add `tmp` to the `PATH` and create a symbolic link between `getflag` and `echo`.
