@@ -5,7 +5,8 @@ The first thing we see is we have a Perl script.
 ls -l
 -rwsr-sr-x 1 flag04 level04 152 Mar  5  2016 level04.pl
 ```
-Just like the previous level, we see that the Set User ID and the Set Group ID are set (allowing us `level04` to run the file like the owner of it `flag04`).
+Just like the previous level, we see that the Set User ID and the Set Group ID are set
+(allowing us `level04` to run the file like the owner of it `flag04`).
 
 When running it, nothing much happens.
 ```
@@ -14,6 +15,7 @@ Content-type: text/html
 
 
 ```
+
 We may get a few infos by using `cat`.
 ```perl
 cat level04.pl
