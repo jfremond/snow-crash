@@ -6,9 +6,9 @@ PORT=4242
 OPEN_ARENA=/opt/openarenaserver
 FLAG=../flag
 
-# Copy the `hack_openarenaserver.sh` to the virtual machine
+# Copy the `save_token_to_file.sh` to the virtual machine
 sshpass -f ${PREVIOUS_FLAG} 2>/dev/null \
-	scp -P ${PORT} -p hack_openarenaserver.sh level05@${ADDRESS}:${OPEN_ARENA}
+	scp -P ${PORT} -p save_token_to_file.sh level05@${ADDRESS}:${OPEN_ARENA}
 
 # Connect to the virtual machine using SSH and run the script
 # to wait for the next cron job (occurs every 2 minutes)
