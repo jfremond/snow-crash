@@ -6,7 +6,7 @@ PORT=4242
 OPEN_ARENA=/opt/openarenaserver
 FLAG=../flag
 
-# Copy the `save_token_to_file.sh` to the virtual machine
+# Copy the `save_token_to_file.sh` file to the virtual machine
 sshpass -f ${PREVIOUS_FLAG} 2>/dev/null \
 	scp -P ${PORT} -p save_token_to_file.sh level05@${ADDRESS}:${OPEN_ARENA}
 
@@ -17,10 +17,11 @@ sshpass -f ${PREVIOUS_FLAG} <wait_for_cron_job.sh 2>/dev/null \
 
 sleep 2
 
-# Copy the `/opt/openarenaserver/.token` file to the host machine
+# Copy the token to the host machine
 sshpass -f ${PREVIOUS_FLAG} 2>/dev/null \
 	scp -P ${PORT} level05@${ADDRESS}:${OPEN_ARENA}/.token ${FLAG}
-# Remove the `/opt/openarenaserver/.token` file from the virtual machine
+
+# Clean the virtual machine
 sshpass -f ${PREVIOUS_FLAG} 2>/dev/null \
 	ssh -p ${PORT} level05@${ADDRESS} 'rm /opt/openarenaserver/.token'
 

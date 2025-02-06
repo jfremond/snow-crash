@@ -29,7 +29,7 @@
 	If it is, then it says that every 2 minutes (`*/2`),
 	the command `su -c "sh /usr/sbin/openarenaserver" - flag05`
 	shall be run, which means that the command `sh /usr/sbin/openarenaserver`
-	shall be run as `flag05`.
+	shall be run with the `flag05` user privileges.
 
 6. __Action__ (Guest): check the permissions of the `/usr/sbin/openarenaserver` file
 	```sh
@@ -155,18 +155,18 @@
 		ssh -p 4242 level06@192.168.122.214 exit \
 	&& echo 'Great! The token is correct!' \
 	|| echo 'Nop, the token is incorrect!'
+	```
 
 21. __Observation__ (Host): the previous command reveals that the token is correct,
 	by printing the following message on stdout: `Great! The token is correct!`
 
-22. __Action__ (Host): copy the `.token` file from the virtual machine to the host machine by running
-	the following command on the host machine
+22. __Action__ (Host): copy the `.token` file from the virtual machine
 	```sh
 	sshpass -f level04/flag 2>/dev/null \
 		scp -P 4242 level05@192.168.122.214:/opt/openareanserver/.token level05/flag
 	```
 
-23. __Action__ (Guest): remove the `.token` file from the virtual machine
+23. __Action__ (Guest): remove the `.token` file
 	```sh
 	rm /opt/openarenaserver/.token
 	```
