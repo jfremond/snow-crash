@@ -101,7 +101,7 @@
 	```sh
 	#!/bin/sh
 
-	echo "I've been run by $USER" | wall
+	echo "I've been run by ${USER}" | wall
 	```
 
 13. __Observation__ (Guest): at the next even minute, the following message appears on stdout:

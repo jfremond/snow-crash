@@ -7,8 +7,8 @@ TMP=./tmp
 FLAG=../flag
 
 # Connect to the virtual machine using SSH and run the script
-# to find every file that is owned by the user `flag00`
-# and can be read by the user `level00`
+# to find every file that is owned by the `flag00` user
+# and can be read by the `level00` user
 READABLE_FILES_OWNED_BY_FLAG00=$(
 	sshpass -p ${LEVEL00_PASSWORD} <find_readable_files_owned_by_flag00.sh 2>/dev/null \
 		ssh -p ${PORT} level00@${ADDRESS} 'sh -s'
@@ -28,7 +28,7 @@ for READABLE_FILE_OWNED_BY_FLAG00 in ${READABLE_FILES_OWNED_BY_FLAG00}; do
 	# Decipher the content of the file using a simple Cesar shift of 11
 	POTENTIAL_PASSWORD=$( tr A-Za-z L-ZA-Kl-za-k <${LOCAL_FILE} )
 
-	# Try to connect to the `flag00` account
+	# Try to connect to the virtual machine and run the `getflag` command as the `flag00` user
 	if
 		sshpass -p ${POTENTIAL_PASSWORD} >${FLAG} 2>/dev/null \
 			ssh -p ${PORT} flag00@${ADDRESS} "getflag | grep -oE '[^ ]+$'"

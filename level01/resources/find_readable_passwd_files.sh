@@ -6,16 +6,16 @@ USER_SHARES_A_GROUP_WITH_FILE=$(
 	done | sed 's/^ -or //'
 )
 FILE_CAN_BE_READ="( \
-	( -user $USER -exec chmod u+r {} + ) \
+	( -user ${USER} -exec chmod u+r {} + ) \
 	-or ( ( ${USER_SHARES_A_GROUP_WITH_FILE} ) -perm /g+r ) \
 	-or -perm /o+r \
 )"
 
 # Finds every `passwd` file that satisfies at least one of the following conditions:
-# - the file is owned by the user `level01`
-# - the file shares a group with the user `level01` and is group-readable
+# - the file is owned by the `level01` user
+# - the file shares a group with the `level01` user and is group-readable
 # - the file is other-readable
-# and, for each file owned by the user `level01`, makes them user-readable
+# and, for each file owned by the `level01` user, makes them user-readable
 find / -type f -name passwd ${FILE_CAN_BE_READ} -exec ls {} + 2>/dev/null
 
 exit 0

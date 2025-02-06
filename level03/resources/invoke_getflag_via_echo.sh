@@ -3,10 +3,10 @@
 # Create a symbolic link named `echo` that points to the `getflag` command
 ln -s $(which getflag) /tmp/echo
 
-# Add the `/tmp` directory to the PATH
-export PATH=/tmp:${PATH}
+# Set the `/tmp` directory as the only one in the `PATH` environment variable
+export PATH=/tmp
 
-# Run the `level03` executable
+# Execute the `level03` file
 ~/level03
 
 exit 0

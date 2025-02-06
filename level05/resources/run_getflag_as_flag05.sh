@@ -15,6 +15,7 @@ sshpass -f ${PREVIOUS_FLAG} 2>/dev/null \
 sshpass -f ${PREVIOUS_FLAG} <wait_for_cron_job.sh 2>/dev/null \
 	ssh -p ${PORT} level05@${ADDRESS} 'sh -s'
 
+# Wait for the cron job to complete its tasks
 sleep 2
 
 # Copy the token to the host machine
