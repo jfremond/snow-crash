@@ -150,7 +150,8 @@
 	```
 
 18. __Observation__ (Host): the previous command reveals that the token is correct,
-	by printing the following message on stdout: `Great! The token is correct!`
+	by printing the following message on stdout:  
+	`Great! The token is correct!`
 
 19. __Action__ (Guest): extract the token from the `getflag_as_flag06` file
 	```sh

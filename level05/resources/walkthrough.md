@@ -26,10 +26,9 @@
 	```
 	*/2 * * * * su -c "sh /usr/sbin/openarenaserver" - flag05
 	```
-	If it is, then it says that every 2 minutes (`*/2`),
-	the command `su -c "sh /usr/sbin/openarenaserver" - flag05`
-	shall be run, which means that the command `sh /usr/sbin/openarenaserver`
-	shall be run with the `flag05` user privileges.
+	If it is, then it says that every 2 minutes (`*/2`), the command
+	`su -c "sh /usr/sbin/openarenaserver" - flag05` shall be run, which means that the command
+	`sh /usr/sbin/openarenaserver` shall be run with the `flag05` user privileges.
 
 6. __Action__ (Guest): check the permissions of the `/usr/sbin/openarenaserver` file
 	```sh
@@ -120,7 +119,8 @@
 	```
 
 15. __Observation__ (Guest): the previous command reveals that the `test.sh` script has been removed,
-	by printing the following message on stdout: `File has been removed`
+	by printing the following message on stdout:  
+	`File has been removed`  
 	highly suggesting that the `usr/sbin/openarenaserver` script has been run,
 	and that the cron job described in the mail is effectively running.
 
@@ -158,7 +158,8 @@
 	```
 
 21. __Observation__ (Host): the previous command reveals that the token is correct,
-	by printing the following message on stdout: `Great! The token is correct!`
+	by printing the following message on stdout:  
+	`Great! The token is correct!`
 
 22. __Action__ (Host): copy the `.token` file from the virtual machine
 	```sh
