@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -eu
 
 sudo useradd \
   --no-create-home \
