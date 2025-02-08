@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -eu
 
 # Execute the `level06` file with the `flag06` user privileges
 # passing the `exploit_php` file as argument to inject the PHP code

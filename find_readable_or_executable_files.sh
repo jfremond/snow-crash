@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -eu
 
 # BOLD='\e[1m'
 # RED='\e[31m'
