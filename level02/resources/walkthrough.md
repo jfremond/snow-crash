@@ -29,3 +29,47 @@ When displaying the conversation as Hex Dump rather than ASCII, we see that the 
 
 Once logged as flag02 using the newly obtained password, we launch the getflag command and get the flag
 `kooda2puivaav1idi4f57q8iq`
+
+# level02
+
+## Steps
+
+1. __Observation__ (Guest): when connecting as the `level02` user,
+    nothing appears on stdout
+
+2. __Action__ (Guest): list the files present at the root
+    ```sh
+    ls -lA
+    ```
+
+3. __Observation__ (Guest): the previous command reveals a PCAP file
+    ```sh
+    ----r--r-- 1 flag02  level02 8302 Aug 30  2015 level02.pcap
+    ```
+
+7. __Action__ (Host): we copy the pcap file on our host machine
+    to manipulate it
+    ```sh
+    scp -P 4242 level02@192.168.56.101:level02.pcap ./level02.pcap
+    ```
+
+8. __Action__ (Host): we change the permissions on the `level02.pcap` file to
+    be able to open it with Wireshark
+    ```sh
+    chmod +x level02.pcap
+    ```
+
+9. __Action__ (Host): open the file with Wireshark to analyze it
+
+10. __Observation__ (Host): Several packets we're exchanged between two IP
+    addresses following the TCP protocol
+
+11. __Action__ (Host): we analyze the PCAP file via following the TCP stream
+
+12 __Observation__ (Host): the previous manipulation reveals an intersting
+    line
+    ```sh
+    ...
+    Password: ft_wandr...NDRel.L0L
+    ...
+    ```
