@@ -1,37 +1,5 @@
 # level02
 
-We see that we have a file when doing ls in the current directory:
-
-```
-ls -l
-----r--r-- 1 flag02 level02 8302 Aug 30  2015 level02.pcap
-```
-
-We transfer that file to our host machine to analyze it :
-```
-scp -P 4242 level02@192.168.56.101:level02.pcap .
-```
-
-A quick search on the internet tells us that a PCAP file is a file containing an exact copy of every byte of every pocket as seen on the network.Read more [here](https://www.endace.com/learn/what-is-a-pcap-file).
-It also tells us it can be read with Wireshark so that's we'll do.
-
-When wanting to analyze, we have the option to follow the TCP stream, which allows us to see what was sent.
-The data is originally showed as ASCII characters.
-
-We see an intersting line in the conversation :
-```
-Password: ft_wandr...NDRel.L0L
-```
-
-When trying to log as flag02 using this password, it doesn't work. Let's try displaying the stream differently.
-
-When displaying the conversation as Hex Dump rather than ASCII, we see that the dots in the password were not really dots but delete characters, the password is now `ft_waNDReL0L`.
-
-Once logged as flag02 using the newly obtained password, we launch the getflag command and get the flag
-`kooda2puivaav1idi4f57q8iq`
-
-# level02
-
 ## Steps
 
 1. __Observation__ (Guest): when connecting as the `level02` user,
