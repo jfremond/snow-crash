@@ -64,12 +64,38 @@ Once logged as flag02 using the newly obtained password, we launch the getflag c
 10. __Observation__ (Host): Several packets we're exchanged between two IP
     addresses following the TCP protocol
 
-11. __Action__ (Host): we analyze the PCAP file via following the TCP stream
+11. __Action__ (Host): we analyze the PCAP file via following the TCP stream,
+    the data is showed as ASCII characters.
 
-12 __Observation__ (Host): the previous manipulation reveals an intersting
+12. __Observation__ (Host): the previous manipulation reveals an intersting
     line
     ```sh
     ...
     Password: ft_wandr...NDRel.L0L
     ...
+    ```
+
+13. __Action__ (GUest): try logging with this password
+
+14. __Observation__ (Guest): the log in failed.
+
+15. __Action__ (Host): show the data differently, it is now showed as hex dump.
+    we see that the dots are delete characters.
+    the password is actually `ft_waNDReL0L`.
+
+16. __Action__ (Guest): log in as `flag02`
+    ```sh
+    su flag02
+    Password: ft_waNDReL0L
+    ```
+
+17. __Observation__ (Guest): we're invited to launch the command `getflag`
+    ```sh
+    Don't forget to launch getflag !
+    ```
+
+18. __Action__ (Guest): get the flag
+    ```sh
+    getflag
+    Check flag.Here is your token : kooda2puivaav1idi4f57q8iq
     ```
