@@ -90,16 +90,16 @@
 
 14. __Action__ (Guest): log in as `flag01`
     ```sh
-    su flag00
+    su flag01
     Password: abcdefg
     ```
 
-8. __Observation__ (Guest): we're invited to launch the command `getflag`
+15. __Observation__ (Guest): we're invited to launch the command `getflag`
     ```sh
     Don't forget to launch getflag !
     ```
 
-9. __Action__ (Guest): get the flag
+16. __Action__ (Guest): get the flag
     ```sh
     getflag
     Check flag.Here is your token : f2av5il02puano7naaf6adaaf
