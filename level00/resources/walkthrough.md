@@ -5,7 +5,7 @@
 1. __Observation__ (Guest): when connecting as the `level00` user,
     nothing appears on stdout
 
-2. __Action__ (Guest): find the files owned by user `flag00`
+2. __Action__ (Guest): find the files owned by the `flag00` user
     ```sh
     find / -user flag00 2>/dev/null
     ```
@@ -18,8 +18,7 @@
 
 4. __Action__ (Guest): check the content of the files
     ```sh
-    cat /usr/sbin/john
-    cat /rofs/usr/sbin/john
+    cat /usr/sbin/john /rofs/usr/sbin/john
     ```
 
 5. __Observation__ (Guest): the previous command reveals the same content
@@ -29,6 +28,8 @@
     ```
 
 6. __Action__ (Host): decipher the message
+    the message was deciphered on [dcode](https://www.dcode.fr/chiffre-cesar).
+    the shift used to decipher the message was a shift of 15
     ```sh
     nottoohardhere
     ```
