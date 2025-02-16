@@ -26,7 +26,7 @@ for READABLE_FILE_OWNED_BY_FLAG00 in ${READABLE_FILES_OWNED_BY_FLAG00}; do
 	chmod 600 ${LOCAL_FILE}
 
 	# Decipher the content of the file using a simple Cesar shift of 11
-	POTENTIAL_PASSWORD=$( tr A-Za-z L-ZA-Kl-za-k <${LOCAL_FILE} )
+	POTENTIAL_PASSWORD=$( tr a-z l-za-k <${LOCAL_FILE} )
 
 	# Try to connect to the virtual machine and run the `getflag` command as the `flag00` user
 	if
