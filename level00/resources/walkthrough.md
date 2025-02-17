@@ -2,51 +2,46 @@
 
 ## Steps
 
-1. __Observation__ (Guest): when connecting as the `level00` user,
-    nothing appears on stdout
-
-2. __Action__ (Guest): find the files owned by the `flag00` user
+1. __Action__ (Guest): find the files owned by the `flag00` user
     ```sh
     find / -user flag00 2>/dev/null
     ```
 
-3. __Observation__ (Guest): the previous command reveals two files
-    ```sh
+2. __Observation__ (Guest): the previous command reveals two files
+    ```
     /usr/sbin/john
     /rofs/usr/sbin/john
     ```
 
-4. __Action__ (Guest): check the content of the files
+3. __Action__ (Guest): check the content of the files
     ```sh
-    cat /usr/sbin/john /rofs/usr/sbin/john
+    less /usr/sbin/john /rofs/usr/sbin/john
     ```
 
-5. __Observation__ (Guest): the previous command reveals the same content
-    ```sh
+4. __Observation__ (Guest): the previous command reveals the same content
+    ```
     cdiiddwpgswtgt
     cdiiddwpgswtgt
     ```
 
-6. __Action__ (Host): decipher the message
+5. __Action__ (Host): decipher the message
     the message was deciphered on [dcode](https://www.dcode.fr/chiffre-cesar).
-    the shift used to decipher the message was a shift of 15
-    ```sh
+    the shift used to decipher the message was a shift of 11
+    ```
     nottoohardhere
     ```
 
-7. __Action__ (Guest): log in as `flag00`
+6. __Action__ (Guest): log in as `flag00`
     ```sh
     su flag00
-    Password: nottoohardhere
     ```
 
-8. __Observation__ (Guest): we're invited to launch the command `getflag`
-    ```sh
+7. __Observation__ (Guest): we're invited to launch the command `getflag`
+    ```
     Don't forget to launch getflag !
     ```
 
-9. __Action__ (Guest): get the flag
+8. __Action__ (Guest): get the flag
     ```sh
     getflag
-    Check flag.Here is your token : x24ti5gi3x0ol2eh4esiuxias
     ```
