@@ -15,7 +15,7 @@
 
 3. __Action__ (Guest): check the content of the files
     ```sh
-    less /usr/sbin/john /rofs/usr/sbin/john
+    cat /usr/sbin/john /rofs/usr/sbin/john
     ```
 
 4. __Observation__ (Guest): the previous command reveals the same content
