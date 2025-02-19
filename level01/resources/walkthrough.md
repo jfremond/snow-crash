@@ -29,7 +29,7 @@
 3. __Action__ (Guest): we check the contents of the primary file containing
     information about user accounts
     ```sh
-    less /etc/passwd
+    cat /etc/passwd
     ```
 
 4. __Observation__ (Guest): the previous command reveals an abnormality at
