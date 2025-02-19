@@ -92,7 +92,7 @@
     ```sh
     sshpass -f snow-crash/level02/flag \
     scp -P 4242 level03@192.168.56.101:/home/user/level03/level03 level03
-    docker cp snow-crash:level03 .
+    docker cp snow-crash:level03 level03
     ```
 
 9. __Action__ (Host): pass the executable to [dogbolt](https://dogbolt.org/)
