@@ -59,7 +59,7 @@
     1 password hash cracked, 0 left
     ```
 
-8. __Action__ (Guest): log in as `flag01`
+8. __Action__ (Guest): log in as the `flag01` user
     ```sh
     su flag01
     ```

@@ -31,7 +31,7 @@
     nottoohardhere
     ```
 
-6. __Action__ (Guest): log in as `flag00`
+6. __Action__ (Guest): log in as the `flag00` user
     ```sh
     su flag00
     ```
