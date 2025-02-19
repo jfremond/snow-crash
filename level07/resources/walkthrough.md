@@ -44,8 +44,8 @@
 	int main(void) {
 		__gid_t egid;
 		__uid_t euid;
-		char    *command_line;
-		char    *logname;
+		char *  command_line;
+		char *  logname;
 		int     exit_status;
 	
 		egid = getegid();

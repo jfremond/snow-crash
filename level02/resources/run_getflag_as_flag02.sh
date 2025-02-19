@@ -7,8 +7,9 @@ PCAP=level02.pcap
 FLAG=../flag
 
 # Copy the 'level02.pcap' file from the virtual machine to the host + set its permissions
-sshpass -f ${PREVIOUS_FLAG} 2>/dev/null scp -P ${PORT} level02@${ADDRESS}:${PCAP} .
-chmod 600 ${PCAP}
+sshpass -f ${PREVIOUS_FLAG} 2>/dev/null \
+	scp -P ${PORT} level02@${ADDRESS}:${PCAP} .
+chmod 400 ${PCAP}
 
 # Extract the raw data from the packets of the 'level02.pcap' file
 RAW_PACKET_DATA=$( tshark -r ${PCAP} -T fields -e 'data' | tr -d '\n' )
