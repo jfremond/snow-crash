@@ -18,7 +18,7 @@
 
 4. __Action__ (Guest): print the content of the `/var/mail/level05` file
 	```sh
-	less /var/mail/level05
+	cat /var/mail/level05
 	```
 
 5. __Observation__ (Guest): the `/var/mail/level05` file contains only 1 line,
@@ -51,7 +51,7 @@
 
 8. __Action__ (Guest): print the content of the `/usr/sbin/openarenaserver` file
 	```sh
-	less /usr/sbin/openarenaserver
+	cat /usr/sbin/openarenaserver
 	```
 
 9. __Observation__ (Guest): the `/usr/sbin/openarenaserver` file is a shell script
@@ -140,7 +140,7 @@
 18. __Action__ (Guest): check if the `.token` file has been correctly created
 	and contains the wanted token
 	```sh
-	less /opt/openarenaserver/.token || echo 'File does not exist'
+	cat /opt/openarenaserver/.token || echo 'File does not exist'
 	```
 
 19. __Observation__ (Guest): the previous command reveals that the file has been created,

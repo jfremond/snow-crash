@@ -70,7 +70,7 @@
 8. __Action__ (Guest): check that the `token` file has been correctly created
 	and contains the wanted token
 	```sh
-	less /tmp/token
+	cat /tmp/token
 	```
 
 9. __Observation__ (Guest): the previous command reveals that the file has been created,

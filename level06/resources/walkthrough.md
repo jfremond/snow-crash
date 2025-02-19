@@ -57,7 +57,7 @@
 
 7. __Action__ (Guest): check the content of the `level06.php` file
 	```sh
-	less level06.php
+	cat level06.php
 	```
 
 8. __Observation__ (Guest): as the file extension suggests, the `level06.php` file is a PHP script,
@@ -132,7 +132,7 @@
 15. __Action__ (Guest): check if the `getflag_as_flag06` file has been correctly created
 	and contains the wanted output
 	```sh
-	less /tmp/getflag_as_flag06 || echo 'File does not exist'
+	cat /tmp/getflag_as_flag06 || echo 'File does not exist'
 	```
 
 16. __Observation__ (Guest): the previous command reveals that the file has been created,
