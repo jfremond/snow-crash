@@ -7,9 +7,9 @@ FLAG=../flag
 
 # Run the script to hack the `level07` file and get the token on the virtual machine
 sshpass -f ${PREVIOUS_FLAG} <run_level07_with_altered_env.sh 2>/dev/null \
-	ssh -p ${PORT} level07@${ADDRESS} 'sh -s'
+	ssh -p ${PORT} level07@${ADDRESS} sh -s
 
-# Copy the token to the host machine
+# Copy the token from the virtual machine
 sshpass -f ${PREVIOUS_FLAG} 2>/dev/null \
 	scp -P ${PORT} level07@${ADDRESS}:/tmp/token ${FLAG}
 
