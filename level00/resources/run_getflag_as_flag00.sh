@@ -4,14 +4,15 @@ LEVEL00_PASSWORD=level00
 ADDRESS=192.168.122.214
 PORT=4242
 TMP=./tmp
-FLAG=../flag
+FLAG=../flag_bis
 
 # Connect to the virtual machine using SSH and run the script
 # to find every file that is owned by the `flag00` user
 # and can be read by the `level00` user
 READABLE_FILES_OWNED_BY_FLAG00=$(
 	sshpass -p ${LEVEL00_PASSWORD} <find_readable_files_owned_by_flag00.sh 2>/dev/null \
-		ssh -p ${PORT} level00@${ADDRESS} 'sh -s'
+		ssh -p ${PORT} level00@${ADDRESS} \
+			sh -s
 )
 
 mkdir ${TMP}

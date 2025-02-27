@@ -25,4 +25,3 @@ sshpass -p ${FLAG09_PASSWORD} 2>/dev/null \
 	ssh -p ${PORT} flag09@${ADDRESS} \
 		getflag \
 | grep -oE '[^ ]+$' >${FLAG}
-

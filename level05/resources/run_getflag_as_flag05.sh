@@ -13,7 +13,8 @@ sshpass -f ${PREVIOUS_FLAG} 2>/dev/null \
 # Connect to the virtual machine using SSH and run the script
 # to wait for the next cron job (occurs every 2 minutes)
 sshpass -f ${PREVIOUS_FLAG} <wait_for_cron_job.sh 2>/dev/null \
-	ssh -p ${PORT} level05@${ADDRESS} 'sh -s'
+	ssh -p ${PORT} level05@${ADDRESS} \
+		sh -s
 
 # Wait for the cron job to complete its tasks
 sleep 2

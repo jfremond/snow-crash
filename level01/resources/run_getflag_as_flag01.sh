@@ -9,8 +9,9 @@ FLAG=../flag
 # Connect to the virtual machine using SSH and run the script
 # to find every `passwd` file that can be read by the `level01` user
 READABLE_PASSWD_FILES=$(
-	sshpass -f ${PREVIOUS_FLAG} 2>/dev/null \
-		ssh -p ${PORT} level01@${ADDRESS} 'sh -s' <find_readable_passwd_files.sh
+	sshpass -f ${PREVIOUS_FLAG} <find_readable_passwd_files.sh 2>/dev/null \
+		ssh -p ${PORT} level01@${ADDRESS} \
+			sh -s
 )
 
 rm -rf ~/.john

@@ -7,4 +7,5 @@ FLAG=../flag
 
 # Run the script to hack the `level11.lua` file and save the token in a file
 sshpass -f ${PREVIOUS_FLAG} <inject_shell_command.sh >${FLAG} 2>/dev/null \
-	ssh -p ${PORT} level11@${ADDRESS} sh -s
+	ssh -p ${PORT} level11@${ADDRESS} \
+		sh -s
