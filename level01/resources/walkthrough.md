@@ -55,7 +55,7 @@
 5. __Action__ (Host): copy the `/etc/passwd` file from the virtual machine
 	```sh
 	sshpass -f level00/flag 2>/dev/null \
-		scp -P 4242 level01@192.168.56.101:/etc/passwd ./snow_crash_passwd
+		scp -P 4242 level01@192.168.122.214:/etc/passwd ./snow_crash_passwd
 	```
 
 6. __Action__ (Host): use `John the Ripper` to crack the password hash
