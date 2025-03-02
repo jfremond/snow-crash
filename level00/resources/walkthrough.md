@@ -55,5 +55,5 @@
 	sshpass -p nottoohardhere 2>/dev/null \
 		ssh -p 4242 flag00@192.168.122.214 \
 			getflag \
-	| grep -oE '[^ ]+$' >level00/flag
+	| egrep -o '[^ ]+$' >level00/flag
 	```

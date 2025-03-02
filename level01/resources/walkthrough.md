@@ -33,7 +33,7 @@
 
 4. __Observation__ (Guest): the previous command reveals that the `flag01` user
 	is the only flag user that has its password hash stored directly in the `/etc/passwd` file,
-	which is a security risk
+	which is a security vulnerability
 	```
 	flag00:x:3000:3000::/home/flag/flag00:/bin/bash
 	flag01:42hDRfypTqqnw:3001:3001::/home/flag/flag01:/bin/bash
@@ -88,7 +88,7 @@
 	sshpass -p abcdefg 2>/dev/null \
 		ssh -p 4242 flag01@192.168.122.214 \
 			getflag \
-	| grep -oE '[^ ]+$' >level01/flag
+	| egrep -o '[^ ]+$' >level01/flag
 	```
 
 11. __Action__(Host): remove the `snow_crash_passwd` file
