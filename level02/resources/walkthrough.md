@@ -2,23 +2,24 @@
 
 ## Steps
 
-1. __Action__ (Guest): list the files present at the root
+1. __Action__ (Guest): list the files present in the `level02` user's home directory
 	```sh
 	ls -A
 	```
 
-2. __Observation__ (Guest): the previous command reveals a PCAP file
-	```sh
+2. __Observation__ (Guest): the previous command reveals 1 file possibly of interest,
+	named `level02.pcap`
+	```
 	.bash_logout  .bashrc  level02.pcap  .profile
 	```
 
-3. __Action__ (Guest): get information on the PCAP file
+3. __Action__ (Guest): check the file access control list of the `level02.pcap` file
 	```sh
 	getfacl level02.pcap
 	```
 
-4. __Observation__ (Guest): the previous command reveals that the PCAP file is
-	not readable by the `level02` user
+4. __Observation__ (Guest): the previous command reveals that the PCAP file
+	is readable by the `level02` user
 	```
 	# file: level02.pcap
 	# owner: flag02
@@ -28,77 +29,211 @@
 	other::r--
 	```
 
-5. __Action__ (Host): we copy the pcap file on our host machine
-	to manipulate it
+5. __Action__ (Host): copy the `level02.pcap` file from the virtual machine
 	```sh
-	sshpass -f snow-crash/level01/flag  \
-	scp -P 4242 level02@192.168.56.101:level02.pcap ./level02.pcap
+	sshpass -f level01/flag 2>/dev/null \
+		scp -P 4242 level02@192.168.122.214:level02.pcap .
 	```
 
-6. __Action__ (Host): we change the permissions on the `level02.pcap` file to
-	be able to open it with `tshark`
+6. __Action__ (Host): set the permissions of the `level02.pcap` file to the minimum to read it
 	```sh
-	chmod +x level02.pcap
+	chmod 400 level02.pcap
 	```
 
-7. __Action__ (Host): open the file with `tshark` to read it
+7. __Action__ (Host): examine the `level02.pcap` file with the `tshark` command
 	```sh
 	tshark -r level02.pcap
 	```
 
-8. __Observation__ (Host): Several packets are exchanged between two IP
+8. __Observation__ (Host): the previous command reveals several packets exchanged between two IP
 	addresses following the TCP protocol
 	```
-	1   0.000000 59.233.235.218 ? 59.233.235.223 TCP 74 39247 ? 12121 [SYN] Seq=0 Win=14600 Len=0 MSS=1460 SACK_PERM TSval=18592800 TSecr=0 WS=128
-	2   0.000128 59.233.235.223 ? 59.233.235.218 TCP 74 12121 ? 39247 [SYN, ACK] Seq=0 Ack=1 Win=14480 Len=0 MSS=1460 SACK_PERM TSval=46280417 TSecr=18592800 WS=32
+	 1   0.000000 59.233.235.218 → 59.233.235.223 TCP 74 39247 → 12121 [SYN] Seq=0 Win=14600 Len=0 MSS=1460 SACK_PERM TSval=18592800 TSecr=0 WS=128
+	 2   0.000128 59.233.235.223 → 59.233.235.218 TCP 74 12121 → 39247 [SYN, ACK] Seq=0 Ack=1 Win=14480 Len=0 MSS=1460 SACK_PERM TSval=46280417 TSecr=18592800 WS=32
+	 3   0.000390 59.233.235.218 → 59.233.235.223 TCP 66 39247 → 12121 [ACK] Seq=1 Ack=1 Win=14720 Len=0 TSval=18592800 TSecr=46280417
+	 4   0.036008 59.233.235.223 → 59.233.235.218 TCP 69 12121 → 39247 [PSH, ACK] Seq=1 Ack=1 Win=14496 Len=3 TSval=46280426 TSecr=18592800
+	 5   0.036255 59.233.235.218 → 59.233.235.223 TCP 66 39247 → 12121 [ACK] Seq=1 Ack=4 Win=14720 Len=0 TSval=18592804 TSecr=46280426
+	 6   0.036276 59.233.235.218 → 59.233.235.223 TCP 69 39247 → 12121 [PSH, ACK] Seq=1 Ack=4 Win=14720 Len=3 TSval=18592804 TSecr=46280426
+	 7   0.036396 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=4 Ack=4 Win=14496 Len=0 TSval=46280426 TSecr=18592804
+	 8   0.036581 59.233.235.223 → 59.233.235.218 TCP 84 12121 → 39247 [PSH, ACK] Seq=4 Ack=4 Win=14496 Len=18 TSval=46280426 TSecr=18592804
+	 9   0.036698 59.233.235.218 → 59.233.235.223 TCP 84 39247 → 12121 [PSH, ACK] Seq=4 Ack=22 Win=14720 Len=18 TSval=18592804 TSecr=46280426
+	10   0.036859 59.233.235.223 → 59.233.235.218 TCP 90 12121 → 39247 [PSH, ACK] Seq=22 Ack=22 Win=14496 Len=24 TSval=46280426 TSecr=18592804
+	11   0.037039 59.233.235.218 → 59.233.235.223 TCP 133 39247 → 12121 [PSH, ACK] Seq=22 Ack=46 Win=14720 Len=67 TSval=18592804 TSecr=46280426
+	12   0.039170 59.233.235.223 → 59.233.235.218 TCP 84 12121 → 39247 [PSH, ACK] Seq=46 Ack=89 Win=14496 Len=18 TSval=46280427 TSecr=18592804
+	13   0.039392 59.233.235.218 → 59.233.235.223 TCP 140 39247 → 12121 [PSH, ACK] Seq=89 Ack=64 Win=14720 Len=74 TSval=18592804 TSecr=46280427
+	14   0.039704 59.233.235.223 → 59.233.235.218 TCP 73 12121 → 39247 [PSH, ACK] Seq=64 Ack=163 Win=14496 Len=7 TSval=46280427 TSecr=18592804
+	15   0.039842 59.233.235.218 → 59.233.235.223 TCP 73 39247 → 12121 [PSH, ACK] Seq=163 Ack=71 Win=14720 Len=7 TSval=18592804 TSecr=46280427
+	16   0.040138 59.233.235.223 → 59.233.235.218 TCP 81 12121 → 39247 [PSH, ACK] Seq=71 Ack=170 Win=14496 Len=15 TSval=46280427 TSecr=18592804
+	17   0.040277 59.233.235.218 → 59.233.235.223 TCP 75 39247 → 12121 [PSH, ACK] Seq=170 Ack=86 Win=14720 Len=9 TSval=18592804 TSecr=46280427
+	18   0.040450 59.233.235.223 → 59.233.235.218 TCP 107 12121 → 39247 [PSH, ACK] Seq=86 Ack=179 Win=14496 Len=41 TSval=46280427 TSecr=18592804
+	19   0.071743 59.233.235.218 → 59.233.235.223 TCP 66 39247 → 12121 [ACK] Seq=179 Ack=127 Win=14720 Len=0 TSval=18592808 TSecr=46280427
+	20   0.071825 59.233.235.223 → 59.233.235.218 TCP 141 12121 → 39247 [PSH, ACK] Seq=127 Ack=179 Win=14496 Len=75 TSval=46280435 TSecr=18592808
+	21   0.071976 59.233.235.218 → 59.233.235.223 TCP 66 39247 → 12121 [ACK] Seq=179 Ack=202 Win=14720 Len=0 TSval=18592808 TSecr=46280435
+	22  12.223886 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=179 Ack=202 Win=14720 Len=1 TSval=18594023 TSecr=46280435
+	23  12.229432 59.233.235.223 → 59.233.235.218 TCP 68 12121 → 39247 [PSH, ACK] Seq=202 Ack=180 Win=14496 Len=2 TSval=46283475 TSecr=18594023
+	24  12.229592 59.233.235.218 → 59.233.235.223 TCP 66 39247 → 12121 [ACK] Seq=180 Ack=204 Win=14720 Len=0 TSval=18594023 TSecr=46283475
+	25  12.323890 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=180 Ack=204 Win=14720 Len=1 TSval=18594033 TSecr=46283475
+	26  12.329436 59.233.235.223 → 59.233.235.218 TCP 68 12121 → 39247 [PSH, ACK] Seq=204 Ack=181 Win=14496 Len=2 TSval=46283500 TSecr=18594033
+	27  12.329654 59.233.235.218 → 59.233.235.223 TCP 66 39247 → 12121 [ACK] Seq=181 Ack=206 Win=14720 Len=0 TSval=18594033 TSecr=46283500
+	28  12.553547 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=181 Ack=206 Win=14720 Len=1 TSval=18594056 TSecr=46283500
+	29  12.561397 59.233.235.223 → 59.233.235.218 TCP 68 12121 → 39247 [PSH, ACK] Seq=206 Ack=182 Win=14496 Len=2 TSval=46283558 TSecr=18594056
+	30  12.561533 59.233.235.218 → 59.233.235.223 TCP 66 39247 → 12121 [ACK] Seq=182 Ack=208 Win=14720 Len=0 TSval=18594056 TSecr=46283558
+	31  12.644167 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=182 Ack=208 Win=14720 Len=1 TSval=18594065 TSecr=46283558
+	32  12.649394 59.233.235.223 → 59.233.235.218 TCP 68 12121 → 39247 [PSH, ACK] Seq=208 Ack=183 Win=14496 Len=2 TSval=46283580 TSecr=18594065
+	33  12.649527 59.233.235.218 → 59.233.235.223 TCP 66 39247 → 12121 [ACK] Seq=183 Ack=210 Win=14720 Len=0 TSval=18594065 TSecr=46283580
+	34  12.714079 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=183 Ack=210 Win=14720 Len=1 TSval=18594072 TSecr=46283580
+	35  12.721391 59.233.235.223 → 59.233.235.218 TCP 68 12121 → 39247 [PSH, ACK] Seq=210 Ack=184 Win=14496 Len=2 TSval=46283598 TSecr=18594072
+	36  12.721530 59.233.235.218 → 59.233.235.223 TCP 66 39247 → 12121 [ACK] Seq=184 Ack=212 Win=14720 Len=0 TSval=18594072 TSecr=46283598
+	37  13.043928 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=184 Ack=212 Win=14720 Len=1 TSval=18594105 TSecr=46283598
+	38  13.049520 59.233.235.223 → 59.233.235.218 TCP 68 12121 → 39247 [PSH, ACK] Seq=212 Ack=185 Win=14496 Len=2 TSval=46283680 TSecr=18594105
+	39  13.049762 59.233.235.218 → 59.233.235.223 TCP 66 39247 → 12121 [ACK] Seq=185 Ack=214 Win=14720 Len=0 TSval=18594105 TSecr=46283680
+	40  13.823856 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=185 Ack=214 Win=14720 Len=1 TSval=18594183 TSecr=46283680
+	41  13.827303 59.233.235.223 → 59.233.235.218 TCP 67 12121 → 39247 [PSH, ACK] Seq=214 Ack=186 Win=14496 Len=1 TSval=46283874 TSecr=18594183
+	42  13.827557 59.233.235.218 → 59.233.235.223 TCP 66 39247 → 12121 [ACK] Seq=186 Ack=215 Win=14720 Len=0 TSval=18594183 TSecr=46283874
+	43  13.827653 59.233.235.223 → 59.233.235.218 TCP 79 12121 → 39247 [PSH, ACK] Seq=215 Ack=186 Win=14496 Len=13 TSval=46283874 TSecr=18594183
+	44  13.827763 59.233.235.218 → 59.233.235.223 TCP 66 39247 → 12121 [ACK] Seq=186 Ack=228 Win=14720 Len=0 TSval=18594183 TSecr=46283874
+	45  22.095852 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=186 Ack=228 Win=14720 Len=1 TSval=18595010 TSecr=46283874
+	46  22.133398 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=228 Ack=187 Win=14496 Len=0 TSval=46285951 TSecr=18595010
+	47  22.985487 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=187 Ack=228 Win=14720 Len=1 TSval=18595099 TSecr=46285951
+	48  22.985568 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=228 Ack=188 Win=14496 Len=0 TSval=46286164 TSecr=18595099
+	49  23.605835 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=188 Ack=228 Win=14720 Len=1 TSval=18595161 TSecr=46286164
+	50  23.605906 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=228 Ack=189 Win=14496 Len=0 TSval=46286319 TSecr=18595161
+	51  24.076245 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=189 Ack=228 Win=14720 Len=1 TSval=18595208 TSecr=46286319
+	52  24.076322 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=228 Ack=190 Win=14496 Len=0 TSval=46286436 TSecr=18595208
+	53  24.306019 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=190 Ack=228 Win=14720 Len=1 TSval=18595231 TSecr=46286436
+	54  24.306080 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=228 Ack=191 Win=14496 Len=0 TSval=46286494 TSecr=18595231
+	55  24.535764 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=191 Ack=228 Win=14720 Len=1 TSval=18595254 TSecr=46286494
+	56  24.535825 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=228 Ack=192 Win=14496 Len=0 TSval=46286551 TSecr=18595254
+	57  24.675695 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=192 Ack=228 Win=14720 Len=1 TSval=18595268 TSecr=46286551
+	58  24.675752 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=228 Ack=193 Win=14496 Len=0 TSval=46286586 TSecr=18595268
+	59  25.016142 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=193 Ack=228 Win=14720 Len=1 TSval=18595302 TSecr=46286586
+	60  25.016217 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=228 Ack=194 Win=14496 Len=0 TSval=46286671 TSecr=18595302
+	61  26.596535 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=194 Ack=228 Win=14720 Len=1 TSval=18595460 TSecr=46286671
+	62  26.596615 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=228 Ack=195 Win=14496 Len=0 TSval=46287066 TSecr=18595460
+	63  26.966369 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=195 Ack=228 Win=14720 Len=1 TSval=18595497 TSecr=46287066
+	64  26.966450 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=228 Ack=196 Win=14496 Len=0 TSval=46287159 TSecr=18595497
+	65  27.336798 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=196 Ack=228 Win=14720 Len=1 TSval=18595534 TSecr=46287159
+	66  27.336848 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=228 Ack=197 Win=14496 Len=0 TSval=46287251 TSecr=18595534
+	67  28.106976 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=197 Ack=228 Win=14720 Len=1 TSval=18595611 TSecr=46287251
+	68  28.107054 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=228 Ack=198 Win=14496 Len=0 TSval=46287444 TSecr=18595611
+	69  28.306873 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=198 Ack=228 Win=14720 Len=1 TSval=18595631 TSecr=46287444
+	70  28.306942 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=228 Ack=199 Win=14496 Len=0 TSval=46287494 TSecr=18595631
+	71  29.996885 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=199 Ack=228 Win=14720 Len=1 TSval=18595800 TSecr=46287494
+	72  29.996963 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=228 Ack=200 Win=14496 Len=0 TSval=46287916 TSecr=18595800
+	73  31.307388 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=200 Ack=228 Win=14720 Len=1 TSval=18595931 TSecr=46287916
+	74  31.307470 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=228 Ack=201 Win=14496 Len=0 TSval=46288244 TSecr=18595931
+	75  31.747118 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=201 Ack=228 Win=14720 Len=1 TSval=18595975 TSecr=46288244
+	76  31.747176 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=228 Ack=202 Win=14496 Len=0 TSval=46288354 TSecr=18595975
+	77  32.367715 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=202 Ack=228 Win=14720 Len=1 TSval=18596037 TSecr=46288354
+	78  32.367798 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=228 Ack=203 Win=14496 Len=0 TSval=46288509 TSecr=18596037
+	79  32.537454 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=203 Ack=228 Win=14720 Len=1 TSval=18596054 TSecr=46288509
+	80  32.537506 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=228 Ack=204 Win=14496 Len=0 TSval=46288552 TSecr=18596054
+	81  32.807373 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=204 Ack=228 Win=14720 Len=1 TSval=18596081 TSecr=46288552
+	82  32.807426 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=228 Ack=205 Win=14496 Len=0 TSval=46288619 TSecr=18596081
+	83  32.837328 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=205 Ack=228 Win=14720 Len=1 TSval=18596084 TSecr=46288619
+	84  32.837382 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=228 Ack=206 Win=14496 Len=0 TSval=46288626 TSecr=18596084
+	85  33.697667 59.233.235.218 → 59.233.235.223 TCP 67 39247 → 12121 [PSH, ACK] Seq=206 Ack=228 Win=14720 Len=1 TSval=18596170 TSecr=46288626
+	86  33.697744 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [ACK] Seq=228 Ack=207 Win=14496 Len=0 TSval=46288842 TSecr=18596170
+	87  33.705420 59.233.235.223 → 59.233.235.218 TCP 69 12121 → 39247 [PSH, ACK] Seq=228 Ack=207 Win=14496 Len=3 TSval=46288844 TSecr=18596170
+	88  33.705616 59.233.235.218 → 59.233.235.223 TCP 66 39247 → 12121 [ACK] Seq=207 Ack=231 Win=14720 Len=0 TSval=18596170 TSecr=46288844
+	89  36.462504 59.233.235.223 → 59.233.235.218 TCP 67 12121 → 39247 [PSH, ACK] Seq=231 Ack=207 Win=14496 Len=1 TSval=46289533 TSecr=18596170
+	90  36.462761 59.233.235.218 → 59.233.235.223 TCP 66 39247 → 12121 [ACK] Seq=207 Ack=232 Win=14720 Len=0 TSval=18596446 TSecr=46289533
+	91  36.462858 59.233.235.223 → 59.233.235.218 TCP 101 12121 → 39247 [PSH, ACK] Seq=232 Ack=207 Win=14496 Len=35 TSval=46289533 TSecr=18596446
+	92  36.463013 59.233.235.218 → 59.233.235.223 TCP 66 39247 → 12121 [ACK] Seq=207 Ack=267 Win=14720 Len=0 TSval=18596446 TSecr=46289533
+	93  42.109464 59.233.235.218 → 59.233.235.223 TCP 66 39247 → 12121 [FIN, ACK] Seq=207 Ack=267 Win=14720 Len=0 TSval=18597011 TSecr=46289533
+	94  42.110028 59.233.235.223 → 59.233.235.218 TCP 66 12121 → 39247 [FIN, ACK] Seq=267 Ack=208 Win=14496 Len=0 TSval=46290945 TSecr=18597011
+	95  42.110236 59.233.235.218 → 59.233.235.223 TCP 66 39247 → 12121 [ACK] Seq=208 Ack=268 Win=14720 Len=0 TSval=18597011 TSecr=46290945
 	```
 
-9. __Action__ (Host): we follow the TCP stream to see what was exhanged
-	between the two IP addresses
+9. __Action__ (Host): concatenate and print the packets' data
 	```sh
-	tshark -r level02.pcap -q -z follow,tcp,hex,0
-	```
-	Only the content of the packets is displayed, in hexadecimal.
-
-10. __Observation__ (Host): the previous manipulation reveals intersting lines
-	```
-	000000D6  00 0d 0a 50 61 73 73 77  6f 72 64 3a 20           ...Passw ord:
-	000000B9  66                                                f
-	000000BA  74                                                t
-	000000BB  5f                                                _
-	000000BC  77                                                w
-	000000BD  61                                                a
-	000000BE  6e                                                n
-	000000BF  64                                                d
-	000000C0  72                                                r
-	000000C1  7f                                                .
-	000000C2  7f                                                .
-	000000C3  7f                                                .
-	000000C4  4e                                                N
-	000000C5  44                                                D
-	000000C6  52                                                R
-	000000C7  65                                                e
-	000000C8  6c                                                l
-	000000C9  7f                                                .
-	000000CA  4c                                                L
-	000000CB  30                                                0
-	000000CC  4c                                                L
+	tshark -r level02.pcap -T fields -e 'data' | tr -d '\n' | tr a-f A-F ; echo
 	```
 
-11. __Observation__ (Host): after taking into account that the dots are delete characters,
-	we see that the password is `ft_waNDReL0L`
+10. __Observation__ (Host): the previous command reveals the following data, in hexadecimal:
+	```
+	FFFD25FFFC25FFFB26FFFD18FFFD20FFFD23FFFD27FFFD24FFFE26FFFB18FFFB20FFFB23FFFB27FFFC24FFFA2001FFF0FFFA2301FFF0FFFA2701FFF0FFFA1801FFF0FFFA200033383430302C3338343030FFF0FFFA2300536F646143616E3A30FFF0FFFA270000444953504C415901536F646143616E3A30FFF0FFFA1800787465726DFFF0FFFB03FFFD01FFFD22FFFD1FFFFB05FFFD21FFFD03FFFC01FFFB22FFFA220301000003620304020F05000007621C08020409421A0A027F0B02150F02111002131102FFFF1202FFFFFFF0FFFB1FFFFA1F00B10031FFF0FFFD05FFFB21FFFA220103FFF0FFFA220107FFF0FFFA2103FFF0FFFB01FFFD00FFFE22FFFD01FFFB00FFFC22FFFA220303E20304820F07E21C08820409C21A0A827F0B82150F82111082131182FFFF1282FFFFFFF00D0A4C696E757820322E362E33382D382D67656E657269632D70616520283A3A666666663A31302E312E312E322920287074732F3130290D0A0A010077777762756773206C6F67696E3A206C006C6500657600766500656C006C5800580D01000D0A50617373776F72643A2066745F77616E64727F7F7F4E4452656C7F4C304C0D000D0A01000D0A4C6F67696E20696E636F72726563740D0A77777762756773206C6F67696E3A20
+	```
 
-12. __Action__ (Guest): log in as the `flag02` user
+11. __Action__ (Host): implement a program to convert the hexadecimal data to ASCII,
+	in a file named `xtoa.c`
+	```c
+	#include <ctype.h>
+	#include <stdint.h>
+	#include <stdio.h>
+	#include <string.h>
+
+	#define BASE "0123456789ABCDEF"
+	#define DELETE 0x7F
+
+	int main(int const ac, char const *const *const av) {
+		for (size_t i = 1; i < (size_t)ac; i += 1) {
+			char const *const hexadecimal_string = av[i];
+			size_t const len = strlen(hexadecimal_string);
+
+			if ((len & 1) != 0) {
+				fprintf(stderr, "error: every byte must be represented with 2 digits\n");
+				continue;
+			}
+			if (strspn(hexadecimal_string, BASE) != len) {
+				fprintf(stderr, "error: only hexadecimal digits are allowed\n");
+				continue;
+			}
+			for (size_t j = 0; j < len; j += 2) {
+				uint8_t const byte =
+					((uint8_t)(strchr(BASE, hexadecimal_string[j]) - BASE) << 4)
+					+ (uint8_t)(strchr(BASE, hexadecimal_string[j + 1]) - BASE);
+
+				if (isprint(byte)) {
+					putchar(byte);
+				} else {
+					printf(byte == DELETE ? "\e[1D" : "□");
+				}
+			}
+			putchar('\n');
+		}
+		return 0;
+	}
+	```
+
+12. __Action__ (Host): compile the `xtoa.c` file
 	```sh
-	su flag02
+	clang -Wall -Wextra -o xtoa xtoa.c
 	```
 
-13. __Observation__ (Guest): we're invited to launch the command `getflag`
-	```
-	Don't forget to launch getflag !
-	```
-
-14. __Action__ (Guest): get the flag
+13. __Action__ (Host): execute the `xtoa` file with the hexadecimal packets' data
 	```sh
-	getflag
+	./xtoa $( tshark -r level02.pcap -T fields -e 'data' | tr -d '\n' | tr a-f A-F )
+	```
+
+14. __Observation__ (Host): the previous command reveals the following data, in ASCII:
+	```
+	□□%□□%□□&□□□□□ □□#□□'□□$□□&□□□□□ □□#□□'□□$□□ □□□□□#□□□□□'□□□□□□□□□□□ □38400,38400□□□□#□SodaCan:0□□□□'□□DISPLAY□SodaCan:0□□□□□□xterm□□□□□□□□□□"□□□□□□□□!□□□□□□□□"□□"□□□□□b□□□□□□□□b□□□□□B□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□1□□□□□□□!□□"□□□□□□"□□□□□□!□□□□□□□□□□□"□□□□□□□□"□□"□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□Linux 2.6.38-8-generic-pae (::ffff:10.1.1.2) (pts/10)□□□□□wwwbugs login: l□le□ev□ve□el□lX□X□□□□□Password: ft_waNDReL0L□□□□□□□□Login incorrect□□wwwbugs login: 
+	```
+	letting appear the password `ft_waNDReL0L`
+
+15. __Action__ (Host): try to connect as the `flag02` user with the discovered password
+	```sh
+	sshpass -p ft_waNDReL0L 2>/dev/null \
+		ssh -p 4242 flag02@192.168.122.214 \
+			exit \
+	&& echo 'Great! The token is correct!' \
+	|| echo 'Nop, the token is incorrect!'
+	```
+
+16. __Observation__ (Host): the following message appears on stdout: `Great! The token is correct!`  
+	confirming that the discorvered password is indeed the password of the `flag02` user
+
+17. __Action__ (Host): run the `getflag` command as the `flag02` user
+	and save the token in the `flag` file
+	```sh
+	sshpass -p ft_waNDReL0L 2>/dev/null \
+		ssh -p 4242 flag02@192.168.122.214 \
+			getflag \
+	| grep -oE '[^ ]+$' >level02/flag
+	```
+
+18. __Action__(Host): remove the `xtoa`, `xtoa.c`, and `level02.pcap` files
+	```sh
+	rm xtoa xtoa.c level02.pcap
 	```
