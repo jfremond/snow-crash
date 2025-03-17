@@ -62,6 +62,7 @@
 
 		setresgid(gid, gid, gid);
 		setresuid(uid, uid, uid);
+
 		return system("/usr/bin/env echo Exploit me");
 	}
 	```
@@ -81,7 +82,7 @@
 
 12. __Action__ (Host): copy the token from the virtual machine
 	```sh
-	sshpass -f snow-crash/level02/flag \
+	sshpass -f level02/flag \
 		scp -P 4242 level03@192.168.122.214:/tmp/token level03/flag
 	```
 
