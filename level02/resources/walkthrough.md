@@ -18,7 +18,7 @@
 	getfacl level02.pcap
 	```
 
-4. __Observation__ (Guest): the previous command reveals that the PCAP file
+4. __Observation__ (Guest): the previous command reveals that the `level02.pcap` file
 	is readable by the `level02` user
 	```
 	# file: level02.pcap
@@ -187,7 +187,7 @@
 				if (isprint(byte)) {
 					putchar(byte);
 				} else {
-					printf(byte == DELETE ? "\e[1D" : "□");
+					printf(byte == DELETE ? "\x1B[1D" : "□");
 				}
 			}
 			putchar('\n');
