@@ -92,9 +92,13 @@
 	```
 
 13. __Observation__ (Guest): the previous command reveals
-	that the `/opt/openarenaserver` directory is:
-	- readable, writable, and executable by the `level05` user
-	- readable, writable, and executable by the `flag05` user
+	that the `/opt/openarenaserver` directory:
+	- is readable by the `level05` user
+	- is writable by the `level05` user
+	- is executable by the `level05` user
+	- is readable by the `flag05` user
+	- is writable by the `flag05` user
+	- is executable by the `flag05` user
 	```
 	getfacl: Removing leading '/' from absolute path names
 	# file: opt/openarenaserver

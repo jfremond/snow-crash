@@ -2,7 +2,7 @@
 
 ## Steps
 
-1. __Action__ (Guest): check the content of the `level06` user home directory once connected
+1. __Action__ (Guest): list the files present in the `level06` user's home directory
 	```sh
 	ls -A
 	```
@@ -13,19 +13,19 @@
 	.bash_logout  .bashrc  .profile  level06  level06.php
 	```
 
-3. __Action__ (Guest): check the permissions of both `level06` and `level06.php` files
+3. __Action__ (Guest): check the file access control list of both `level06` and `level06.php` files
 	```sh
 	getfacl level06 level06.php
 	```
 
 4. __Observation__ (Guest): the previous command reveals that:
 	- the `level06` file:
-		- is readable by the `level06` group
-		- is executable by the `level06` group
+		- is readable by the `level06` user
+		- is writable by the `level06` user
 		- has the `setuid` bit enabled
 	- the `level06.php` file:
-		- is readable by the `level06` group
-		- is executable by the `level06` group
+		- is readable by the `level06` user
+		- is executable by the `level06` user
 	```
 	# file: level06
 	# owner: flag06
@@ -60,10 +60,10 @@
 	cat level06.php
 	```
 
-8. __Observation__ (Guest): as the file extension suggests, the `level06.php` file is a PHP script,
-	which reads the content of a file, applies some transformations to it, and prints the result.
-	The name of the file to read is passed as the first argument to the script,
-	and the second argument is not used.
+8. __Observation__ (Guest): the previous command reveals that the `level06.php` file
+	is a PHP script that reads the content of a file, applies some transformations to it,
+	and prints the result. The name of the file to read is passed as the first argument
+	to the script, and the second argument is not used.
 	```php
 	#!/usr/bin/php
 	<?php
@@ -111,7 +111,7 @@
 
 12. __Observation__ (Guest): the `level06.php` script uses the `/e` regex modifier
 	in the first `preg_replace` call, which is a deprecated feature as it is known to be
-	a security issue. Indeed, the `/e` modifier allows to evaluate the replacement string
+	a security vulnerability. Indeed, the `/e` modifier allows to evaluate the replacement string
 	as PHP code, which can be used to execute arbitrary commands.
 	This means that the `y("something")` function call is actually executed as PHP code,
 	so the only thing we have to manage is to make `something` be a callback
@@ -155,7 +155,7 @@
 
 19. __Action__ (Guest): extract the token from the `getflag_as_flag06` file
 	```sh
-	grep -oE '[^ ]+$' /tmp/getflag_as_flag06 >/tmp/token
+	egrep -o '[^ ]+$' /tmp/getflag_as_flag06 >/tmp/token
 	```
 
 20. __Action__ (Host): copy the `token` file from the virtual machine
