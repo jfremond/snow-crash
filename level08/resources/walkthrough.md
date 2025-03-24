@@ -64,6 +64,8 @@
 	making sure that the name of the symbolic link does not contain the string `token`, and
 	then pass the name of the symbolic link as an argument to the `level08` file.
 	```c
+	#include <stdlib.h>
+
 	int main(int const ac, char const *const *const av) {
 		if (ac == 1) {
 			printf("%s [file to read]\n", av[0]);
