@@ -21,6 +21,7 @@
 4. __Observation__ (Guest): the previous command reveals that the `level04.pl` file:
 	- is readable by the `level04` user
 	- is executable by the `level04` user
+	- is owned by the `flag04` user
 	- has the `setuid` bit enabled
 	```
 	# file: level04.pl

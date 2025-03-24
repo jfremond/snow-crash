@@ -22,6 +22,7 @@
 	- the `level06` file:
 		- is readable by the `level06` user
 		- is writable by the `level06` user
+		- is owned by the `flag06` user
 		- has the `setuid` bit enabled
 	- the `level06.php` file:
 		- is readable by the `level06` user

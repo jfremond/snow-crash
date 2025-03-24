@@ -13,12 +13,12 @@
 	/rofs/usr/sbin/john
 	```
 
-3. __Action__ (Guest): check the file access control list of both the `john` files
+3. __Action__ (Guest): check the file access control list of both `john` files
 	```sh
 	getfacl /usr/sbin/john /rofs/usr/sbin/john
 	```
 
-4. __Observation__ (Guest): the previous command reveals that both the `john` files
+4. __Observation__ (Guest): the previous command reveals that both `john` files
 	are readable by the `level00` user
 	```
 	getfacl: Removing leading '/' from absolute path names
@@ -37,7 +37,7 @@
 	other::r--
 	```
 
-5. __Action__ (Guest): check the content of both the `john` files
+5. __Action__ (Guest): check the content of both `john` files
 	```sh
 	cat /usr/sbin/john /rofs/usr/sbin/john
 	```

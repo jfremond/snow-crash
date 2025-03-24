@@ -21,6 +21,7 @@
 4. __Observation__ (Guest): the previous command reveals that the `level07` file:
 	- is readable by the `level07` user
 	- is executable by the `level07` user
+	- is owned by the `flag07` user
 	- has the `setuid` and the `setgid` bits enabled
 	```
 	# file: level07
