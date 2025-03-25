@@ -32,7 +32,7 @@ for READABLE_FILE_OWNED_BY_FLAG00 in ${READABLE_FILES_OWNED_BY_FLAG00}; do
 	# Try to connect to the virtual machine and run the `getflag` command as the `flag00` user
 	if
 		sshpass -p ${POTENTIAL_PASSWORD} >${FLAG} 2>/dev/null \
-			ssh -p ${PORT} flag00@${ADDRESS} "getflag | grep -oE '[^ ]+$'"
+			ssh -p ${PORT} flag00@${ADDRESS} "getflag | egrep -o '[^ ]+$'"
 	then
 		# Found the correct password and saved the flag
 		rm -rf ${TMP}

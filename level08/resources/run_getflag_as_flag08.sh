@@ -27,4 +27,4 @@ sshpass -f ../../level04/flag 2>/dev/null \
 sshpass -p ${FLAG08_PASSWORD} 2>/dev/null \
 	ssh -p ${PORT} flag08@${ADDRESS} \
 		getflag \
-| grep -oE '[^ ]+$' >${FLAG}
+| egrep -o '[^ ]+$' >${FLAG}

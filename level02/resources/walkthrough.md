@@ -230,7 +230,7 @@
 	sshpass -p ft_waNDReL0L 2>/dev/null \
 		ssh -p 4242 flag02@192.168.122.214 \
 			getflag \
-	| grep -oE '[^ ]+$' >level02/flag
+	| egrep -o '[^ ]+$' >level02/flag
 	```
 
 18. __Action__(Host): remove the `xtoa`, `xtoa.c`, and `level02.pcap` files

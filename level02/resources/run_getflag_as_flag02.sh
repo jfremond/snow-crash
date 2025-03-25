@@ -33,14 +33,14 @@ done
 
 # Extract the password field(s) from the packet data
 POTENTIAL_PASSWORDS=$(
-	echo ${PACKET_DATA} | grep -Eo 'Password:\.*[^.]+' | sed 's/Password:\.*//g'
+	echo ${PACKET_DATA} | egrep -o 'Password:\.*[^.]+' | sed 's/Password:\.*//g'
 )
 
 for POTENTIAL_PASSWORD in ${POTENTIAL_PASSWORDS}; do
 	# Try to connect to the virtual machine and run the `getflag` command as the 'flag02' user
 	if
 		sshpass -p ${POTENTIAL_PASSWORD} >${FLAG} 2>/dev/null \
-			ssh -p ${PORT} flag02@${ADDRESS} "getflag | grep -oE '[^ ]+$'"
+			ssh -p ${PORT} flag02@${ADDRESS} "getflag | egrep -o '[^ ]+$'"
 	then
 		# Found the correct password and saved the flag
 		rm ${PCAP}

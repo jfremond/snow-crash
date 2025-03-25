@@ -85,7 +85,7 @@
     which executes the `getflag` command.
     The first step is to create a file with the command we want to execute
     ```sh
-    echo "getflag | grep -oE '[^ ]+$' > /tmp/token" > /tmp/BYPASS
+    echo "getflag | egrep -o '[^ ]+$' > /tmp/token" > /tmp/BYPASS
     ```
 
 7. __Action__ (Guest): exploit the vulnerability in the script
