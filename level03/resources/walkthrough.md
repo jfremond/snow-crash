@@ -89,5 +89,5 @@
 
 13. __Action__ (Guest): remove the `echo` symbolic link and the `token` file
 	```sh
-	rm /tmp/echo /tmp/token
+	rm /tmp/{'echo','token'}
 	```

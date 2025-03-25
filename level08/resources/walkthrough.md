@@ -55,14 +55,16 @@
 	```
 
 5. __Action__ (Host): decompile the `level08` file using [dogbolt](https://dogbolt.org/)
+	and manually improve the lisibility of the decompiled code
 
-6. __Observation__ (Host): the Ghidra decompiler reveals that the `level08` takes a filename
-	as an argument, and it reads the content of the file and writes it to the standard output.
-	The thing is that it checks if the filename contains the string `token`, and if it does,
-	it prints an error message and exits. So we could not just pass the `token` file as an
-	argument to the `level08` file, but we could create a symbolic link to the `token` file,
-	making sure that the name of the symbolic link does not contain the string `token`, and
-	then pass the name of the symbolic link as an argument to the `level08` file.
+6. __Observation__ (Host): after reverse engineering the `level08` file, we obtain the following
+	C code, which takes a filename as an argument, reads the content of the file
+	and writes it to the standard output. The thing is that it checks if the filename
+	contains the string `token`, and if it does, it prints an error message and exits.
+	So we could not just pass the `token` file as an argument to the `level08` file,
+	but we could create a symbolic link to the `token` file, making sure that the name
+	of the symbolic link does not contain the string `token`, and then pass the name
+	of the symbolic link as an argument to the `level08` file.
 	```c
 	#include <stdlib.h>
 

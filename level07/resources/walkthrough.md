@@ -33,10 +33,18 @@
 	other::r-x
 	```
 
-5. __Action__ (Guest): decompile the `level07` file using [dogbolt](https://dogbolt.org/)
+5. __Action__ (Host): copy the `level07` file from the virtual machine
+	```sh
+	sshpass -f level06/flag 2>/dev/null \
+		scp -P 4242 level07@192.168.122.214:level07 .
+	```
 
-6. __Observation__ (Host): the Ghidra decompiler reveals that the `level07` file calls
-	the `system` function to invoke `echo` via an absolute path, so we may not hack it
+5. __Action__ (Guest): decompile the `level07` file using [dogbolt](https://dogbolt.org/)
+	and manually improve the lisibility of the decompiled code
+
+6. __Observation__ (Host): after reverse engineering the `level07` file, we obtain the following
+	C code, which sets the real, effective, and saved user and group IDs, and then
+	invokes the `/bin/echo` command through the `system` function, so we may not hack it
 	via a symbolic link as we did in the `level03`, but we also see that it manually
 	expands the `LOGNAME` environment variable, and then it passes it to `echo`
 	without single-quotes, so we can exploit the `LOGNAME` environment variable

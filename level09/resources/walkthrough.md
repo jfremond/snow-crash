@@ -118,7 +118,7 @@
 17. __Action__ (Host): copy the `token` file from the virtual machine
 	```sh
 	sshpass -f level08/flag 2>/dev/null \
-		scp -P 4242 level09@192.168.122.214:token token
+		scp -P 4242 level09@192.168.122.214:token .
 	chmod 400 token
 	```
 
