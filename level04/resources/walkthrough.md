@@ -39,8 +39,8 @@
 	```
 
 6. __Observation__ (Guest): the previous command reveals that the `level04.pl` file is a Perl script
-	running an HTTP server on localhost on port 4747, which, foreach incoming request, takes the value
-	of the `x` parameter (empty if not provided) and prints it via a shell command
+	that runs an HTTP server on localhost on port 4747, which, foreach incoming request,
+	takes the value of the `x` parameter (empty if not provided) and prints it via a shell command
 	(``print `echo $y 2>&1`;``).  
 	Note that the `$y` variable is unquoted when passed to the `echo` command, which means that
 	we can inject shell commands in the `x` parameter

