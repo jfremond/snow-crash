@@ -1,6 +1,6 @@
 #!/bin/sh -eu
 
-USER_OWNS_FILE="( -user $( whoami ) -exec chmod u+r {} + )" 
+USER_OWNS_FILE="( -user $( whoami ) -exec chmod u+r {} + )"
 USER_SHARES_A_GROUP_WITH_FILE="( $(
 	for GID in $( id -G ) ; do
 		echo -n " -or -group ${GID}"
