@@ -61,7 +61,7 @@
 	```
 
 12. __Action__ (Host): decompile the `getflag` file using [dogbolt](https://dogbolt.org/),
-	and manually improve the lisibility of the decompiled code
+	and manually improve the readability of the decompiled code
 
 13. __Observation__ (Host): after reverse engineering the `getflag` file, we obtain the following
 	C code, which stores all the flags staticly, encrypted, but the function to decrypt them

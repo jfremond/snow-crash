@@ -66,7 +66,7 @@
 	```
 
 8. __Action__ (Host): decompile the `level08` file using [dogbolt](https://dogbolt.org/)
-	and manually improve the lisibility of the decompiled code
+	and manually improve the readability of the decompiled code
 
 9. __Observation__ (Host): after reverse engineering the `level08` file, we obtain the following
 	C code, which takes a filename as an argument, reads the content of the file

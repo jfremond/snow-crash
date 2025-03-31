@@ -51,7 +51,7 @@
 	```
 
 8. __Action__ (Guest): decompile the `level07` file using [dogbolt](https://dogbolt.org/)
-	and manually improve the lisibility of the decompiled code
+	and manually improve the readability of the decompiled code
 
 9. __Observation__ (Host): after reverse engineering the `level07` file, we obtain the following
 	C code, which sets the real, effective, and saved user and group IDs, and then

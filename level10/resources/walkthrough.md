@@ -66,7 +66,7 @@
 	```
 
 8. __Action__ (Host): decompile the `level10` file using [dogbolt](https://dogbolt.org/)
-	and manually improve the lisibility of the decompiled code
+	and manually improve the readability of the decompiled code
 
 9. __Observation__ (Host): after reverse engineering the `level10` file, we obtain the following
 	C code, which takes a filename and a hostname as arguments, checks the access to the file
