@@ -10,7 +10,7 @@
 2. __Observation__ (Guest): the previous command reveals 1 file possibly of interest,
 	named `level02.pcap`
 	```
-	.bash_logout  .bashrc  level02.pcap  .profile
+	.bash_logout  .bashrc  .profile  level02.pcap
 	```
 
 3. __Action__ (Guest): check the file access control list of the `level02.pcap` file
@@ -156,7 +156,7 @@
 	```
 
 11. __Action__ (Host): implement a program to convert the hexadecimal data to ASCII,
-	in a file named `xtoa.c`
+	in a file named `xtoa.c` in the `level02/resources` directory.
 	```c
 	#include <ctype.h>
 	#include <stdint.h>
@@ -198,12 +198,12 @@
 
 12. __Action__ (Host): compile the `xtoa.c` file
 	```sh
-	clang -Wall -Wextra -o xtoa xtoa.c
+	clang -Wall -Wextra -o /tmp/xtoa level02/resources/xtoa.c
 	```
 
 13. __Action__ (Host): execute the `xtoa` file with the hexadecimal packets' data
 	```sh
-	./xtoa $( tshark -r level02.pcap -T fields -e 'data' | tr -d '\n' | tr a-f A-F )
+	/tmp/xtoa $( tshark -r level02.pcap -T fields -e 'data' | tr -d '\n' | tr a-f A-F )
 	```
 
 14. __Observation__ (Host): the previous command reveals the following data, in ASCII:
@@ -233,7 +233,7 @@
 	| egrep -o '[^ ]+$' >level02/flag
 	```
 
-18. __Action__(Host): remove the `xtoa`, `xtoa.c`, and `level02.pcap` files
+18. __Action__(Host): remove the `xtoa` and `level02.pcap` files
 	```sh
-	rm xtoa xtoa.c level02.pcap
+	rm -f /tmp/xtoa level02.pcap
 	```

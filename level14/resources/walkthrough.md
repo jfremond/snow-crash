@@ -56,8 +56,8 @@
 
 11. __Action__ (Host): copy the `getflag` file from the virtual machine
 	```sh
-	sshpass -f level14/flag 2>/dev/null \
-		scp level14@192.168.122.214:/bin/getflag /tmp
+	sshpass -f level13/flag 2>/dev/null \
+		scp -P 4242 level14@192.168.122.214:/bin/getflag /tmp
 	```
 
 12. __Action__ (Host): decompile the `getflag` file using [dogbolt](https://dogbolt.org/),
@@ -316,20 +316,20 @@
 		exit(EXIT_SUCCESS);
 	}
 	```
-	and save it in a file named `altered_getflag.c`
+	and save it in a file named `altered_getflag.c` in the `level14/resources` directory
 
 16. __Action__ (Host): compile the altered version of the `getflag` program
 	```sh
-	clang -Wall -Wextra -o altered_getflag
+	clang -Wall -Wextra -o /tmp/altered_getflag level14/resources/altered_getflag.c
 	```
 
 17. __Action__ (Host): execute the `altered_getflag` file
 	and save the printed token to the `flag` file
 	```sh
-	./altered_getflag 14 | egrep -o '[^ ]+$' >level14/flag
+	/tmp/altered_getflag 14 | egrep -o '[^ ]+$' >level14/flag
 	```
 
-18. __Action__ (Host): remove the `altered_getflag` and `altered_getflag.c` files
+18. __Action__ (Host): remove the `altered_getflag` files
 	```sh
-	rm altered_getflag altered_getflag.c
+	rm /tmp/altered_getflag
 	```

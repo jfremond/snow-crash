@@ -119,5 +119,5 @@
 
 13. __Action__ (Guest): remove the `token` file
 	```sh
-	rm /tmp/token
+	rm -f /tmp/token
 	```

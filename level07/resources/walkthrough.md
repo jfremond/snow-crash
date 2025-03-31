@@ -119,7 +119,7 @@
 16. __Action__ (Host): copy the `token` file from the virtual machine
 	```sh
 	sshpass -f level06/flag 2>/dev/null \
-		scp -P 4242 level06@192.168.122.214:/tmp/token level07/flag
+		scp -P 4242 level07@192.168.122.214:/tmp/token level07/flag
 	```
 
 17. __Action__ (Guest): remove the `token` file

@@ -145,5 +145,5 @@
 
 15. __Action__ (Guest): remove the `token` and `BYPASS` files
 	```sh
-	rm /tmp/{'token','BYPASS'}
+	rm -f /tmp/{'token','BYPASS'}
 	```

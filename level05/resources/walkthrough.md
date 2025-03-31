@@ -188,7 +188,7 @@
 24. __Action__ (Host): copy the `.token` file from the virtual machine
 	```sh
 	sshpass -f level04/flag 2>/dev/null \
-		scp -P 4242 level05@192.168.122.214:/opt/openareanserver/.token level05/flag
+		scp -P 4242 level05@192.168.122.214:/opt/openarenaserver/.token level05/flag
 	```
 
 25. __Action__ (Guest): remove the `.token` file

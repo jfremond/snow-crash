@@ -102,8 +102,8 @@
 	rm /tmp/level13
 	```
 
-11. __Action__ (Host): put the previous C code in a file named `altered_level13.c`,
-	and modify the `main` function to remove the guard clause,
+11. __Action__ (Host): put the previous C code in a file named `altered_level13.c`
+	in the `level13/resources` directory, and modify the `main` function to remove the guard clause,
 	resulting in the following new `main` function:
 	```c
 	int main(void) {
@@ -117,13 +117,13 @@
 
 12. __Action__ (Host): compile the `altered_level13.c` file
 	```sh
-	clang -Wall -Wextra -o altered_level13 altered_level13.c
+	clang -Wall -Wextra -o /tmp/altered_level13 level13/resources/altered_level13.c
 	```
 
 13. __Action__ (Host): execute the `altered_level13` file
 	and save the printed token to the `flag` file
 	```sh
-	./altered_level13 >level13/flag
+	/tmp/altered_level13 >level13/flag
 	```
 
 14. __Action__ (Host): check if the `flag` file content is the expected flag,
@@ -140,7 +140,7 @@
 	by printing the following message on stdout:  
 	`Great! The token is correct!`
 
-16. __Action__ (Host): remove the `altered_level13` and `altered_level13.c` files
+16. __Action__ (Host): remove the `altered_level13` file
 	```sh
-	rm altered_level13 altered_level13.c
+	rm /tmp/altered_level13
 	```

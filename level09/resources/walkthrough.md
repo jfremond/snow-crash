@@ -94,7 +94,8 @@
 	has been encrypted using the `level09` program, and this encryption algorithm is reversable.
 
 15. __Action__ (Host): implement a short program in C named `decrypt.c`
-	that takes any number of strings encrypted by the `level09` program in parameter,
+	in the `level09/resources` directory that takes any number of strings
+	encrypted by the `level09` program in parameter,
 	and decrypts them by applying the reverse operation
 	```c
 	#include <stdio.h>
@@ -112,19 +113,19 @@
 
 16. __Action__ (Host): compile the previous program
 	```sh
-	clang -Wall -Wextra -o decrypt decrypt.c
+	clang -Wall -Wextra -o /tmp/decrypt level09/resources/decrypt.c
 	```
 
 17. __Action__ (Host): copy the `token` file from the virtual machine
 	```sh
 	sshpass -f level08/flag 2>/dev/null \
-		scp -P 4242 level09@192.168.122.214:token .
-	chmod 400 token
+		scp -P 4242 level09@192.168.122.214:token /tmp
+	chmod 400 /tmp/token
 	```
 
 18. __Action__ (Host): execute the `decrypt` file with the content of the `token` file
 	```sh
-	./decrypt $( cat token )
+	/tmp/decrypt $( cat /tmp/token )
 	```
 
 19. __Observation__ (Host): the following text appears on stdout: `f3iji1ju5yuevaus41q1afiuq`  
@@ -139,7 +140,7 @@
 	| egrep -o '[^ ]+$' >level09/flag
 	```
 
-21. __Action__(Host): remove the `token`, `decrypt`, and `decrypt.c` files
+21. __Action__(Host): remove the `token` and `decrypt` files
 	```sh
-	rm token decrypt decrypt.c
+	rm -f /tmp/{'token','decrypt'}
 	```
