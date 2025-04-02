@@ -7,5 +7,5 @@ sudo useradd \
   --uid 3014 \
   flag14
 echo -n 'flag14: '
-sudo -u flag14 getflag | grep -oE '[^ ]+$'
+sudo -u flag14 getflag | egrep -o '[^ ]+$'
 sudo userdel flag14

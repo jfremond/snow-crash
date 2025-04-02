@@ -1,8 +1,8 @@
-# level08
+# level09
 
 ## Steps
 
-1. __Action__ (Guest): check the content of the `level09` user home directory once connected
+1. __Action__ (Guest): list the files present in the `level09` user's home directory
 	```sh
 	ls -A
 	```
@@ -13,19 +13,20 @@
 	.bash_logout  .bashrc  .profile  level09  token
 	```
 
-3. __Action__ (Guest): check the permissions of the `level09` and `token` files
+3. __Action__ (Guest): check the file access control list of both `level09` and `token` files
 	```sh
 	getfacl level09 token
 	```
 
-4. __Observation__ (Guest): the previous command reveals that the `level09` file:
-	- is owned by the `flag09` user
-	- is readable by the `level09` group
-	- is executable by the `level09` group
-	- has the `setuid` bit enabled
+4. __Observation__ (Guest): the previous command reveals that:
+	- the `level09` file:
+		- is readable by the `level09` user
+		- is executable by the `level09` user
+		- is owned by the `flag09` user
+		- has the `setuid` bit enabled
 
-	and the `token` file:
-	- is readable by everyone except the `flag09` user
+	- the `token` file:
+		- is readable by everyone except the `flag09` user
 
 	```
 	# file: level09
@@ -67,7 +68,7 @@
 	```
 
 10. __Observation__ (Guest): the following text appears on stdout: `fpqeew`.  
-	Note that the printed text has exactly the same number of characters 
+	Note that the printed text has exactly the same number of characters
 	as the string we sent in parameter, which suggests that the `level09` program
 	applied a kind of encryption on each character of the string we passed,
 	and printed the encrypted string on stdout.
@@ -93,7 +94,8 @@
 	has been encrypted using the `level09` program, and this encryption algorithm is reversable.
 
 15. __Action__ (Host): implement a short program in C named `decrypt.c`
-	that takes any number of strings encrypted by the `level09` program in parameter,
+	in the `level09/resources` directory that takes any number of strings
+	encrypted by the `level09` program in parameter,
 	and decrypts them by applying the reverse operation
 	```c
 	#include <stdio.h>
@@ -111,46 +113,34 @@
 
 16. __Action__ (Host): compile the previous program
 	```sh
-	clang -Wall -Wextra -o decrypt.out decrypt.c
+	clang -Wall -Wextra -o /tmp/decrypt level09/resources/decrypt.c
 	```
 
 17. __Action__ (Host): copy the `token` file from the virtual machine
 	```sh
 	sshpass -f level08/flag 2>/dev/null \
-		scp -P 4242 level09@192.168.122.214:token token
-	chmod 400 token
+		scp -P 4242 level09@192.168.122.214:token /tmp
+	chmod 400 /tmp/token
 	```
 
-18. __Action__ (Host): execute the `decrypt.out` file with the content of the `token` file
+18. __Action__ (Host): execute the `decrypt` file with the content of the `token` file
 	```sh
-	./decrypt.out $( cat token )
+	/tmp/decrypt $( cat /tmp/token )
 	```
 
 19. __Observation__ (Host): the following text appears on stdout: `f3iji1ju5yuevaus41q1afiuq`  
 	which is more likely to be the clear password of the `flag09` user
 
-20. __Action__ (Host): try to connect as the `flag09` user with the decrypted token
-	```sh
-	sshpass -p f3iji1ju5yuevaus41q1afiuq 2>/dev/null \
-		ssh -p 4242 flag09@192.168.122.214 \
-			exit \
-	&& echo 'Great! The token is correct!' \
-	|| echo 'Nop, the token is incorrect!'
-	```
-
-21. __Observation__ (Host): the following message appears on stdout: `Great! The token is correct!`  
-	confirming that the decrypted token is indeed the password of the `flag09` user
-
-22. __Action__ (Host): run the `getflag` command as the `flag09` user
+20. __Action__ (Host): run the `getflag` command as the `flag09` user
 	and save the token in the `flag` file
 	```sh
 	sshpass -p f3iji1ju5yuevaus41q1afiuq 2>/dev/null \
 		ssh -p 4242 flag09@192.168.122.214 \
 			getflag \
-	| grep -oE '[^ ]+$' >level09/flag
+	| egrep -o '[^ ]+$' >level09/flag
 	```
 
-23. __Action__(Host): remove the `token`, `decrypt.out`, and `decrypt.c` files
+21. __Action__(Host): remove the `token` and `decrypt` files
 	```sh
-	rm -f token decrypt.out decrypt.c
+	rm -f /tmp/{'token','decrypt'}
 	```

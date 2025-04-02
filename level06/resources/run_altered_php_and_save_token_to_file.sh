@@ -6,6 +6,6 @@
 ./level06 /tmp/exploit_php >/dev/null
 
 # Extract the token from the `getflag_as_flag06` file
-grep -oE '[^ ]+$' /tmp/getflag_as_flag06 >/tmp/token
+egrep -o '[^ ]+$' /tmp/getflag_as_flag06 >/tmp/token
 
 exit 0

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -eu
 
 sudo useradd \
   --no-create-home \
@@ -7,5 +7,5 @@ sudo useradd \
   --uid 3010 \
   flag10
 echo -n 'flag10: '
-sudo -u flag10 getflag | grep -oE '[^ ]+$'
+sudo -u flag10 getflag | egrep -o '[^ ]+$'
 sudo userdel flag10

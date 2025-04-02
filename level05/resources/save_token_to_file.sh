@@ -1,3 +1,3 @@
 #!/bin/sh -eu
 
-getflag | grep -oE '[^ ]+$' >/opt/openarenaserver/.token
+getflag | egrep -o '[^ ]+$' >/opt/openarenaserver/.token

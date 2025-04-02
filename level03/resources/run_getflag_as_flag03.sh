@@ -11,6 +11,6 @@ FLAG=../flag
 sshpass -f ${PREVIOUS_FLAG} <invoke_getflag_via_echo.sh 2>/dev/null \
 	ssh -p ${PORT} level03@${ADDRESS} \
 		sh -s \
-| grep -oE '[^ ]+$' >${FLAG}
+| egrep -o '[^ ]+$' >${FLAG}
 
 exit 0

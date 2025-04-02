@@ -2,10 +2,11 @@
 
 ## Steps
 
-1. __Action__ (Guest): check the content of the `level13` user home directory once connected
+1. __Action__ (Guest): list the files present in the `level13` user's home directory
 	```sh
 	ls -A
 	```
+
 2. __Observation__ (Guest): the previous command reveals 1 file possibly of interest,
 	named `level13`
 	```
@@ -17,21 +18,21 @@
 	file -b level13
 	```
 
-4. __Observation__ (Guest): the previous command reveals that the `level13` file is an ELF 32-bits
-	executable
+4. __Observation__ (Guest): the previous command reveals that the `level13` file
+	is an ELF 32-bits executable
 	```
 	setuid setgid ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.24, BuildID[sha1]=0xde91cfbf70ca6632d7e4122f8210985dea778605, not stripped
 	```
 
-5. __Action__ (Guest): check the permissions of the `level13` file
+5. __Action__ (Guest): check the file access control list of the `level13` file
 	```sh
 	getfacl level13
 	```
 
-6. __Observation__ (Guest): the previous command reveals that the `level13` file:
-	- is readable by the `level13` user
+6. __Observation__ (Guest): the previous command reveals that the `level13` file
+	is readable by the `level13` user
 	```
-	level13@SnowCrash:~$ getfacl level13 
+	level13@SnowCrash:~$ getfacl level13
 	# file: level13
 	# owner: flag13
 	# group: level13
@@ -44,11 +45,11 @@
 7. __Action__ (Host): copy the `level13` file from the virtual machine
 	```sh
 	sshpass -f level12/flag 2>/dev/null \
-		scp level13@192.122.214.168:level13 /tmp
+		scp -P 4242 level13@192.168.122.214:level13 /tmp
 	```
 
 8. __Action__ (Host): decompile the `level13` file using [dogbolt](https://dogbolt.org/),
-	and manually improve the lisibility of the decompiled code
+	and manually improve the readability of the decompiled code
 
 9. __Observation__ (Host): after reverse engineering the `level13` file, we obtain the following
 	C code, which has a guard clause that checks if the id of the user that runs the program
@@ -96,9 +97,13 @@
 		exit(EXIT_FAILURE);
 	}
 	```
+10. __Action__ (Host): remove the `level13` file
+	```sh
+	rm /tmp/level13
+	```
 
-10. __Action__ (Host): put the previous C code in a file named `level13.c`,
-	and modify the `main` function to remove the guard clause,
+11. __Action__ (Host): put the previous C code in a file named `altered_level13.c`
+	in the `level13/resources` directory, and modify the `main` function to remove the guard clause,
 	resulting in the following new `main` function:
 	```c
 	int main(void) {
@@ -110,18 +115,19 @@
 	}
 	```
 
-11. __Action__ (Host): compile the `level13.c` file
+12. __Action__ (Host): compile the `altered_level13.c` file
 	```sh
-	clang -Wall -Wextra -o level13.out level13.c
+	clang -Wall -Wextra -o /tmp/altered_level13 level13/resources/altered_level13.c
 	```
 
-12. __Action__ (Host): execute the `level13.out` file and save the printed token to the `flag` file
+13. __Action__ (Host): execute the `altered_level13` file
+	and save the printed token to the `flag` file
 	```sh
-	./level13.out >level13/flag
+	/tmp/altered_level13 >level13/flag
 	```
 
-13. __Action__ (Host): check if the `flag` file content is the expected flag, by trying to connect
-	as the `level14` user
+14. __Action__ (Host): check if the `flag` file content is the expected flag,
+	by trying to connect as the `level14` user
 	```sh
 	sshpass -f level13/flag 2>/dev/null \
 		ssh -p 4242 level14@192.168.122.214 \
@@ -130,11 +136,11 @@
 	|| echo 'Nop, the token is incorrect!'
 	```
 
-14. __Observation__ (Host): the previous command reveals that the token is correct,
+15. __Observation__ (Host): the previous command reveals that the token is correct,
 	by printing the following message on stdout:  
 	`Great! The token is correct!`
 
-15. __Action__ (Host): remove the `level13`, `level13.c`, and `level13.out` files
+16. __Action__ (Host): remove the `altered_level13` file
 	```sh
-	rm /tmp/level13 level13.c level13.out
+	rm /tmp/altered_level13
 	```
