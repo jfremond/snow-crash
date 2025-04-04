@@ -71,7 +71,7 @@
         print("..");
     } else {
         print(".");
-    }    
+    }
     }
 
     n(t(param("x"), param("y")));
