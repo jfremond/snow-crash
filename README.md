@@ -1,6 +1,6 @@
 # Snow Crash - by [jodufour](https://github.com/JonathanDUFOUR) and [jfremond](https://github.com/jfremond/)
 > A 42 school project that serves as a modest introduction to cyber
-> security, through a series of wargame-style levels focused on privilege
+> security, through a series of levels focused on privilege
 > escalation.
 
 ## 📖 Overview
@@ -31,13 +31,8 @@ including any binary files in the repository
 or design flaw to gain elevated access to resources that are normally
 restricted from the current user.
 -   **SUID (Set User ID)**: A special file permission that lets a binary
-run with the privileges of its owner (often root) rather than the user
-executing it, which can be exploited if the binary is unsafe.
+run with the privileges of its owner rather than the user executing
+it, which can be exploited if the binary is unsafe.
 -   **Command injection**: A vulnerability where an attacker can execute
 arbitrary system commands by manipulating input that a program passes
 unsanitized to a shell.
--   **getflag**: The command used, once logged into a `flagXX` account, to
-retrieve the password (token) needed to access the next level.
--   **Wargame**: A type of security exercise structured as a series of
-levels, each requiring a different exploit or technique to progress to
-the next.
